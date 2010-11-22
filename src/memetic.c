@@ -131,14 +131,14 @@ static int
 sorted_insert(struct Individual *pop, struct Individual *new,
         int *curr_size, int n)
 {
-    int i;
+    int i, j;
     int elem = new->cost;
     int low = 0, high = *curr_size, mid;
 
     if (elem >= pop[high - 1].cost) {
         if (high < POPSIZE) {
             pop[high].cost = elem;
-            memcpy(pop[high].data, new->data, n * sizeof(int));
+            for (i = 0; i < n; i++) pop[high].data[i] = new->data[i];
             (*curr_size)++;
             return 1;
         }
@@ -165,11 +165,12 @@ sorted_insert(struct Individual *pop, struct Individual *new,
         }
         for (i = high; i > low; i--) {
             pop[i].cost = pop[i - 1].cost;
-            memcpy(pop[i].data, pop[i - 1].data, n * sizeof(int));
+            for (j = 0; j < n; j++)
+                pop[i].data[j] = pop[i -1].data[j];
         }
 
         pop[low].cost = elem;
-        memcpy(pop[low].data, new->data, n * sizeof(int));
+        for (i = 0; i < n; i++) pop[low].data[i] = new->data[i];
         return 1;
     }
     return 0;
@@ -193,7 +194,7 @@ static void
 initial_pop(struct Individual *population, int *a, int *b, int n,
         ExchangeCostFunc ecf, int start)
 {
-    int i, cost;
+    int i, j, cost;
     int p[n], r[n];
 
     for (i = 0; i < n; i++)
@@ -204,7 +205,7 @@ initial_pop(struct Individual *population, int *a, int *b, int n,
         random_shuffle(r, n);
         cost = local_search(r, a, b, n, ecf);
         population[i].cost = cost;
-        memcpy(population[i].data, r, sizeof(r));
+        for (j = 0; j < n; j++) population[i].data[j] = r[j];
     }
     qsort(population, INITIAL_POPSIZE, sizeof(struct Individual),
             individual_qsort_cmp);
@@ -237,8 +238,9 @@ memetic(int verbose, int asymmetric)
     int popsize = INITIAL_POPSIZE;
     struct Individual population[POPSIZE];
 
-    for (i = 0; i < POPSIZE; i++)
+    for (i = 0; i < POPSIZE; i++) {
         population[i].data = Malloc(n * sizeof(int));
+    }
 
     initial_pop(population, MATRIX2D(a), MATRIX2D(b), n, exchange_cost, 0);
 
@@ -328,11 +330,15 @@ memetic(int verbose, int asymmetric)
                     individual_qsort_cmp);
 
             /* Eliminate duplicates. */
+            int k;
             j = 0;
             for (i = 1; i < popsize; i++) {
                 if (!is_equal(&(population[i]), &(population[j]), n)) {
                     j++;
-                    population[j] = population[i];
+                    population[j].cost = population[i].cost;
+                    for (k = 0; k < n; k++) {
+                        population[j].data[k] = population[i].data[k];
+                    }
                 }
             }
             popsize = ++j;
