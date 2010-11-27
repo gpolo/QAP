@@ -1,0 +1,68 @@
+\section{Descrição}
+
+O \textit{Quadratic Assignment Problem} (QAP) consiste em minimizar a
+função
+ \[ C(\pi) = \sum_{i = 1}^{n} \sum_{j = 1}^{n} f_{ij} d_{\pi(i)
+   \pi(j)} \, , \quad \pi \in \prod(n)  \]
+onde  $\prod(n)$ é o conjunto de todas as permutações de $\{1, \ldots , n\}$.
+
+Apesar da simples descrição e de resolução trivial (Apêndice A) fácil,
+este problema é um dos mais conhecidos e difíceis da otimização
+combinatória \cite{Maniezzo98exactand}. Sua resolução consiste em
+encontrar a melhor alocação de $n$ instalações para $n$ localizações,
+mesmo pequenas instâncias do problema têm sido difíceis de
+resolverem. Matematicamente, o problema é definido pelas matrizes $F$,
+$D$ e $C$, todas $n \times n$. Costuma-se encontrar a matriz $F$ como
+sendo chamada de matriz de fluxos, onde $f_{ij}$ representa o fluxo de
+material da instalação $i$ para a $j$. A matriz $D$ é chamada de
+matriz de distâncias, com $d_{kl}$ representando a distância da
+localização $k$ a $l$. Alguns autores trazem também uma matriz $C$,
+que realiza associação de custos, mas costuma ser ignorada por não
+trazer contribuição significante para a complexidade do  problema
+\cite{QACO}.
+
+Desta forma, propõe-se o uso de duas meta-heurísticas para tentar
+encontrar soluções razoáveis para instâncias do QAP. A primeira
+meta-heurística, a \textit{Ant Colony Optimization} (ACO) \cite{ACO},
+é inspirada no comportamento das formigas. A ACO é projetada para ser
+uma meta-heurística que guie a busca global por meio da atualização do
+``conhecimento’’ adquirido pelo sistema durante o histórico de busca
+\cite{QACO}.
+A segunda proposta faz uso de Algoritmos Meméticos \cite{moscato1} com
+busca local de heurística \textit{pairwise interchange}. Algoritmos
+Meméticos tentam imitar a evolução cultural, formando uma união entre
+a busca global baseada em população e a heurística de busca local
+realizada por cada um dos indivíduos. Esta meta-heurística tem
+alcançado resultados significativos em problemas de otimização
+variados \cite{moscato2}, inclusive o QAP
+\cite{merz_freisleben}. Assim, espera-se que seu uso possa trazer bons
+resultados neste trabalho.
+
+
+\section{Instâncias}
+
+Para avaliar a implementação, 10 instâncias, exibidas na Tabela
+\ref{qapinst}, da QAPLIB \cite{qaplib} foram selecionadas. A coluna
+\textit{gap} descreve a distância entre a melhor solução encontrada e
+um limite inferior estabelecido.
+
+\begin{table}[H]
+  \caption{Instâncias da QAPLIB a serem utilizadas\label{qapinst}}
+  \centering
+  \begin{tabular}{l c r r}
+    \toprule
+    Instância & Tamanho & Melhor solução & \textit{Gap} (\%) \\
+    \midrule
+    Nug12 & 12 & 578 & 0 \\
+    Rou15 & 15 & 354210 & 0 \\
+    Nug17 & 17 & 1732 & 0 \\
+    Chr18b & 18 & 11098 & 0 \\
+    Had20 & 20 & 6922 & 0 \\
+    Nug22 & 22 & 2438 & 0 \\
+    Chr25a & 25 & 3796 & 0 \\
+    Kra30a & 30 & 88900 & 0 \\
+    Esc32h & 32 & 438 & 21,00 \\
+    Esc64a & 64 & 116 & 59,49 \\
+    \bottomrule
+  \end{tabular}
+\end{table}

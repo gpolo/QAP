@@ -1,0 +1,81 @@
+\documentclass[a4paper, 12pt]{article}
+\usepackage[brazil]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{sbc-template}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{float}
+
+
+\title{XXX ACO e Algoritmo Memético para QAP XXX}
+
+\author{Guilherme Polo\inst{1}, Maycon Sambinelli\inst{1} }
+
+\address{Departamento de Informática -- Universidade Estadual de
+  Maringá (UEM)\\
+  CEP -- 87020-900 -- Maringá -- PR -- Brazil
+\email{\{ggpolo,msambinelli\}@gmail.com}
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Empty abstract.
+\end{abstract}
+
+\begin{resumo}
+Resumo vazio.
+\end{resumo}
+
+\input{conteudo}
+
+\bibliographystyle{sbc}
+\bibliography{biblio}
+
+\section*{Apêndice A -- Solução trivial para o QAP}
+\label{apendiceA}
+
+O código a seguir trabalha com o formato de entrada da QAPLIB, mas
+assume índices iniciando em 0, usando a linguagem de programação
+\texttt{Python}. Ele parte de uma permutação inicial $p = [0, \ldots,
+n - 1]$, calcula seu custo e, enquanto não se passar 4242 iterações
+sem melhoria realiza-se um rearranjo da permutação atual. A permutação
+que levar ao menor custo encontrado é apresentada ao final.
+
+\begin{lstlisting}[language=Python,basicstyle=\footnotesize]
+import sys
+import random
+
+def get_matrix(n):
+    while n:
+        line = raw_input().split()
+        if not line: continue
+        n -= 1
+        yield map(int, line)
+
+n = int(raw_input())
+p = range(n)
+a = list(get_matrix(n))
+b = list(get_matrix(n))
+
+best = None
+min_cost = sys.maxint
+no_improvements = 0
+limit_noimprov = 4242
+
+while no_improvements != limit_noimprov:
+    cost = sum(a[i][j] * b[p[i]][p[j]] for i in xrange(n) for j in xrange(n))
+    no_improvements += 1
+    if cost < min_cost:
+        min_cost = cost
+        best = p[:]
+        no_improvements = 0
+    random.shuffle(p)
+
+print best, min_cost
+\end{lstlisting}
+
+\end{document}
