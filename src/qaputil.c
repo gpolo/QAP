@@ -9,6 +9,7 @@
 
 #include <stdio.h>
 #include "qaputil.h"
+#include "util.h"
 
 void
 get_matrices(int *a, int *b, int n)
@@ -17,12 +18,12 @@ get_matrices(int *a, int *b, int n)
 
     for (i = 0; i < n; i++) {
         for (j = 0; j < n; j++) {
-            scanf("%d", &(a[i * n + j]));
+            Scanf(1, "%d", &(a[i * n + j]));
         }
     }
     for (i = 0; i < n; i++) {
         for (j = 0; j < n; j++) {
-            scanf("%d", &(b[i * n + j]));
+            Scanf(1, "%d", &(b[i * n + j]));
         }
     }
 }

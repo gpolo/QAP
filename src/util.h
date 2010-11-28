@@ -16,6 +16,8 @@
 #define SEED_NEW 1
 
 void *Malloc(size_t);
+int Scanf(int, const char *, ...);
+
 int seed_prng(long int, int, long int *);
 void show_sol(int *, int, int);
 double current_usertime_secs(void);
