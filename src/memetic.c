@@ -308,10 +308,11 @@ memetic(struct ParseResult *pinfo)//int flags, double time_limit)
     struct Individual p1, p2, offspring;
     int popchanged, gens_nochange, k1, k2;
     int threshold = (n / 2) + (n / 7);
-    printf("Threshold for mutation: %d\n", threshold);
 
-    gens_nochange = 0;
-    printf("Population size = %d\n", popsize);
+    if (verbose) {
+        printf("Threshold for mutation: %d\n", threshold);
+        printf("Population size = %d\n", popsize);
+    }
 
     offspring.data = Malloc(n * sizeof(int));
 
@@ -319,11 +320,14 @@ memetic(struct ParseResult *pinfo)//int flags, double time_limit)
     int best = population[0].cost, gen_best = 0;
     int gens_without_best_improve = 0;
 
+    gens_nochange = 0;
     time_to_best = 0;
 
     if (use_time_limit) {
         cond = cond_limit_time;
-        printf("Time limit: %f\n", time_limit);
+        if (verbose) {
+            printf("Time limit: %f\n", time_limit);
+        }
     } else {
         cond = cond_limit_generations;
     }
@@ -387,12 +391,18 @@ memetic(struct ParseResult *pinfo)//int flags, double time_limit)
                         n);
             }
         }
-        printf("%d %f, %d\n", total_dist, total_dist / cases, popsize);
+        if (verbose) {
+            printf("%d %f, %d\n", total_dist, total_dist / cases, popsize);
+        }
 
         if (gens_nochange == MUTATE_XGENS_STAGNATE ||
                 (total_dist / cases) < threshold) {
             /* Mutate all but the best and the worst */
-            printf("Mutation!\n");
+            if (verbose) { 
+                printf("Mutation!\n");
+            } else {
+                printf("M");
+            }
 
             for (i = 1; i < popsize - 1; i++) {
                 mutate(population[i].data, threshold, n);
@@ -417,12 +427,17 @@ memetic(struct ParseResult *pinfo)//int flags, double time_limit)
             popsize = ++j;
         }
 
-        printf("End of generation %d, population size: %d, "
-                "best cost: %d -- %d\n",
-                generation, popsize, population[0].cost,
-                gens_without_best_improve);
-        show_sol(population[0].data, n, population[0].cost);
-        printf("\n");
+        if (verbose) {
+            printf("End of generation %d, population size: %d, "
+                    "best cost: %d -- %d\n",
+                    generation, popsize, population[0].cost,
+                    gens_without_best_improve);
+            show_sol(population[0].data, n, population[0].cost);
+            printf("\n");
+        } else {
+            printf(".");
+            fflush(stdout);
+        }
 
 
 #if DEBUG
@@ -436,7 +451,11 @@ memetic(struct ParseResult *pinfo)//int flags, double time_limit)
         if (best == population[0].cost) {
             gens_without_best_improve++;
             if (gens_without_best_improve == 500) {
-                printf("Recreating initial population (keep only the best)!\n");
+                if (verbose) {
+                    printf("Recreating initial population (keep only the best)!\n");
+                } else {
+                    printf("R");
+                }
                 initial_pop(population, MATRIX2D(a), MATRIX2D(b), n,
                         exchange_cost, 1, &recstd);
                 popsize = INITIAL_POPSIZE;
@@ -455,10 +474,14 @@ memetic(struct ParseResult *pinfo)//int flags, double time_limit)
         }
     }
 
+    if (!verbose) {
+        printf("\n");
+    }
+
     printf("Best solution found after: %f seconds\n",
             ((time_to_best > 0) ? time_to_best :
              current_usertime_secs() - start_time));
-    printf("Cost: %d, Generation: %d\n", best, gen_best);
+    printf("Cost: %d\nGeneration: %d\n", best, gen_best);
 
     for (i = 0; i < POPSIZE; i++) {
         free(population[i].data);
