@@ -1,10 +1,12 @@
-\section{Descrição}
+\section{Introdução}
 
-O \textit{Quadratic Assignment Problem} (QAP) consiste em minimizar a
-função
+O PQA (Problema Quadrático de Atribuição/Alocação), ou QAP
+(\textit{Quadratic Assignment Problem}) \cite{qap-origin}, consiste em
+minimizar a função
  \[ C(\pi) = \sum_{i = 1}^{n} \sum_{j = 1}^{n} f_{ij} d_{\pi(i)
    \pi(j)} \, , \quad \pi \in \prod(n)  \]
-onde  $\prod(n)$ é o conjunto de todas as permutações de $\{1, \ldots , n\}$.
+dadas duas matrizes, $F$ e $D$, de ordem $n \times n$, onde $\prod(n)$ é o
+conjunto de todas as permutações de $\{1, \ldots , n\}$.
 
 Apesar da simples descrição e de resolução trivial (Apêndice A) fácil,
 este problema é um dos mais conhecidos e difíceis da otimização
@@ -39,12 +41,45 @@ variados \cite{moscato2}, inclusive o QAP
 resultados neste trabalho.
 
 
-\section{Instâncias}
+\section{Fundamentação teórica}
 
-Para avaliar a implementação, 10 instâncias, exibidas na Tabela
+Detalhar um pouco mais o QAP.
+
+Falar do custo de utilizar métodos para solução exata e
+por isso formas alternativas tem sido utilizadas.
+Falar que utilizou metaheurísticas e juntar com o parágrafo seguinte
+
+% XXX Peguei do meu outro trabalho esse primeiro parágrafo.
+% Mudar, complementar, etc.
+De acordo com \cite{metatheory}, metaheurísticas são uma
+classe de métodos aproximativos projetados para atacar problemas
+difíceis de otimização combinatória que não obtiveram sucesso por meio
+de heurísticas clássicas. Pode-se dizer que metaheurísticas são
+heurísticas que guiam heurísticas, de modo que sejam combinados
+conceitos diversos para exploração do espaço de busca permitindo a
+fuga de ótimos locais.
+
+Falar que o trabalhou utilizou ACO e AM, que são apresentados nas
+Subseções seguintes.
+
+\subsection{ACO}
+
+\subsection{Algoritmos Meméticos}
+
+
+
+\section{Implementação}
+
+
+
+\section{Resultados}
+
+XXX
+
+Para avaliar a implementação, 20 instâncias, exibidas na Tabela
 \ref{qapinst}, da QAPLIB \cite{qaplib} foram selecionadas. A coluna
 \textit{gap} descreve a distância entre a melhor solução encontrada e
-um limite inferior estabelecido.
+um limite inferior estabelecido. XXX
 
 \begin{table}[H]
   \caption{Instâncias da QAPLIB utilizadas\label{qapinst}}
