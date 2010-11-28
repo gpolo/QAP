@@ -23,6 +23,8 @@ usage(const char *prog)
     fprintf(stderr, "Usage: %s [OPTIONS] qaplibinput.data\n", prog);
     fprintf(stderr, "\nOPTIONS:\n");
     fprintf(stderr, "\t-v\t  Be verbose\n");
+    /* Artificial: */
+    fprintf(stderr, "\t-A cost\t  Stop when 'cost' is found\n");
     fprintf(stderr, "\t-S seed\t  Set a seed\n");
     fprintf(stderr, "\t-T time\t  Set a time limit in floating point seconds\n");
     fprintf(stderr, "\t-a\t  Asymmetric instance\n");
@@ -31,66 +33,77 @@ usage(const char *prog)
     exit(1);
 }
 
-static int
-try_openinput(int argc, char *argv[], long int *seed, double *time_limit)
+static struct ParseResult *
+try_openinput(int argc, char *argv[])//, long int *seed, double *time_limit)
 {
 #ifdef LEAVE
 #undef LEAVE
 #endif
 #define LEAVE(msg) fprintf(stderr, msg); exit(1)
 
+    struct ParseResult *result = Malloc(sizeof(struct ParseResult));
     int ch;
-    int status = 0;
+
+    result->flags = 0;
 
     if (argc < 2) {
         usage(argv[0]);
     }
 
-    while ((ch = getopt(argc, argv, "vS:T:asm")) != -1) {
+    while ((ch = getopt(argc, argv, "vA:S:T:asm")) != -1) {
         switch (ch) {
         case 'v':
-            status |= VERBOSE;
+            result->flags |= VERBOSE;
+            break;
+
+        case 'A':
+            result->flags |= ARTIFICIAL;
+            result->artificial_cost_limit = atoi(optarg);
             break;
 
         case 'S':
-            status |= SET_SEED;
-            *seed = atoll(optarg);
+            result->flags |= SET_SEED;
+            result->seed = atoll(optarg);
             break;
 
         case 'T':
-            status |= TIME_LIMIT;
-            *time_limit = atof(optarg);
+            result->flags |= TIME_LIMIT;
+            result->time_limit = atof(optarg);
             break;
 
         case 'a':
-            if (status & SYMMETRIC) {
+            if (result->flags & SYMMETRIC) {
                 LEAVE("CONFLICT: An instance is either symmetric or "
                         "asymmetric.\n");
             }
-            status |= ASYMMETRIC;
+            result->flags |= ASYMMETRIC;
             break;
 
         case 's':
-            if (status & ASYMMETRIC) {
+            if (result->flags & ASYMMETRIC) {
                 LEAVE("CONFLICT: An instance is either symmetric or "
                         "asymmetric.\n");
             }
-            status |= SYMMETRIC;
+            result->flags |= SYMMETRIC;
             break;
 
         case 'm':
-            status |= MEMETIC;
+            result->flags |= MEMETIC;
+            break;
+
+        default:
+            usage(argv[0]);
             break;
         } /* switch */
     }
 
-    if (!(status & SYMMETRIC) && !(status & ASYMMETRIC)) {
+    if (!(result->flags & SYMMETRIC) && !(result->flags & ASYMMETRIC)) {
         LEAVE("MISSING: Is this instance symmetric or asymmetric ?\n");
     }
 
-    if (!(status & MEMETIC)) {
+    if (!(result->flags & MEMETIC)) {
         /* Default to Memetic Algorithm. */
-        status |= MEMETIC;
+        result->flags |= MEMETIC;
     }
 
     argc -= optind;
@@ -104,7 +117,7 @@ try_openinput(int argc, char *argv[], long int *seed, double *time_limit)
         }
     }
 
-    return status;
+    return result;
 
 #undef LEAVE
 }
@@ -113,23 +126,26 @@ try_openinput(int argc, char *argv[], long int *seed, double *time_limit)
 int
 main(int argc, char *argv[])
 {
-    int pinfo;
-    long int seed;
-    double time_limit = 0;
+    int result;
+    struct ParseResult *pinfo;
 
-    pinfo = try_openinput(argc, argv, &seed, &time_limit);
+    pinfo = try_openinput(argc, argv);
 
-    if (seed_prng(seed, ((pinfo & SET_SEED) ? SEED_REUSE : SEED_NEW),
-                &seed) < 0) {
+    if (seed_prng(pinfo->seed,
+                ((pinfo->flags & SET_SEED) ? SEED_REUSE : SEED_NEW),
+                &(pinfo->seed)) < 0) {
         return 1;
     }
 
-    printf("Seed: %ld\n", seed);
+    printf("Seed: %ld\n", pinfo->seed);
 
-    if (pinfo & MEMETIC) {
-        return memetic(pinfo, time_limit);
+    if (pinfo->flags & MEMETIC) {
+        result = memetic(pinfo);
     } else {
         fprintf(stderr, "Not supported.\n");
-        return 1;
+        result = 1;
     }
+
+    free(pinfo);
+    return result;
 }

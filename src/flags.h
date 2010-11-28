@@ -14,4 +14,14 @@
 #define TIME_LIMIT 32
 #define SET_SEED   64
 
+#define ARTIFICIAL  1
+
+struct ParseResult {
+    int flags;
+    int artificial_cost_limit;
+    long int seed;
+    double time_limit;
+};
+
+
 #endif

@@ -7,6 +7,8 @@
 #ifndef MEMETIC_H
 #define MEMETIC_H
 
+#include "flags.h"
+
 #define DEBUG 0
 
 #define POPSIZE 50
@@ -26,6 +28,6 @@ struct RecombineInfo {
 
 typedef int (*CondFunc)(double, double, int);
 
-int memetic(int, double);
+int memetic(struct ParseResult *);
 
 #endif

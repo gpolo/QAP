@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 #include "memetic.h"
 #include "qaputil.h"
 #include "qaplocal.h"
@@ -245,12 +246,15 @@ cond_limit_generations(double used, double limit, int gen)
 }
 
 int
-memetic(int flags, double time_limit)
+memetic(struct ParseResult *pinfo)//int flags, double time_limit)
 {
     /* XXX verbose not used yet. */
-    int asymmetric = flags & ASYMMETRIC;
-    int verbose = flags & VERBOSE;
-    int use_time_limit = flags & TIME_LIMIT;
+    int asymmetric = pinfo->flags & ASYMMETRIC;
+    int verbose = pinfo->flags & VERBOSE;
+    int use_time_limit = pinfo->flags & TIME_LIMIT;
+    int stop_with_cost = ((pinfo->flags & ARTIFICIAL) ?
+            pinfo->artificial_cost_limit : INT_MIN);
+    double time_limit = pinfo->time_limit;
 
     CondFunc cond;
 
@@ -258,7 +262,7 @@ memetic(int flags, double time_limit)
     Scanf(1, "%d", &n);
     int a[n][n], b[n][n];
 
-    int i, j;
+    int i, j, k;
     struct RecombineInfo recresult, recstd;
 
     recresult.index = Malloc(n * sizeof(int));
@@ -286,15 +290,24 @@ memetic(int flags, double time_limit)
         population[i].data = Malloc(n * sizeof(int));
     }
 
+    int generation = 0;//GENERATIONS;
+
+    double start_time;
+
+    start_time = current_usertime_secs();
+    /* XXX Calculate time to initialize population too. */
     initial_pop(population, MATRIX2D(a), MATRIX2D(b), n, exchange_cost, 0,
             &recstd);
+    if (population[0].cost <= stop_with_cost) {
+        /* Already hit the expected value. */
+        time_limit = 0;
+        generation = GENERATIONS;
+    }
     pop_initialized = 1;
 
     struct Individual p1, p2, offspring;
     int popchanged, gens_nochange, k1, k2;
-    int generation = 0;//GENERATIONS;
     int threshold = (n / 2) + (n / 7);
-    double start_time;
     printf("Threshold for mutation: %d\n", threshold);
 
     gens_nochange = 0;
@@ -306,7 +319,6 @@ memetic(int flags, double time_limit)
     int best = population[0].cost, gen_best = 0;
     int gens_without_best_improve = 0;
 
-    start_time = current_usertime_secs();
     time_to_best = 0;
 
     if (use_time_limit) {
@@ -392,7 +404,6 @@ memetic(int flags, double time_limit)
                     individual_qsort_cmp);
 
             /* Eliminate duplicates. */
-            int k;
             j = 0;
             for (i = 1; i < popsize; i++) {
                 if (!is_equal(&(population[i]), &(population[j]), n)) {
@@ -437,8 +448,17 @@ memetic(int flags, double time_limit)
             gen_best = generation;
             gens_without_best_improve = 0;
         }
+
+        /* Artificial option. */
+        if (best <= stop_with_cost) {
+            break;
+        }
     }
 
+    printf("Best solution found after: %f seconds\n",
+            ((time_to_best > 0) ? time_to_best :
+             current_usertime_secs() - start_time));
+    printf("Cost: %d, Generation: %d\n", best, gen_best);
 
     for (i = 0; i < POPSIZE; i++) {
         free(population[i].data);
@@ -446,9 +466,6 @@ memetic(int flags, double time_limit)
     free(offspring.data);
     free(recresult.index);
     free(recstd.index);
-
-    printf("Best solution found after: %f seconds\n", time_to_best);
-    printf("Cost: %d, Generation: %d\n", best, gen_best);
 
     return 0;
 }
