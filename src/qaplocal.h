@@ -7,10 +7,12 @@
 #ifndef QAPLOCAL_H
 #define QAPLOCAL_H
 
-typedef int (*ExchangeCostFunc)(int *, int *, int *, int *, int);
+#include "memetic.h"
 
-int pairwise_exchange_asymmetric_cost(int *, int *, int *, int *, int);
-int pairwise_exchange_symmetric_cost(int *, int *, int *, int *, int);
-int local_search(int *, int *, int *, int, ExchangeCostFunc);
+typedef int (*ExchangeCostFunc)(int, int, int *, int *, int *, int);
+
+int pairwise_exchange_asymmetric_cost(int, int, int *, int *, int *, int);
+int pairwise_exchange_symmetric_cost(int, int, int *, int *, int *, int);
+int local_search(struct RecombineInfo *, int *, int *, int *, int, ExchangeCostFunc);
 
 #endif

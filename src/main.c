@@ -10,12 +10,7 @@
 #include <unistd.h>
 #include "util.h"
 #include "memetic.h"
-
-#define VERBOSE     2
-#define SYMMETRIC   4
-#define ASYMMETRIC  8
-#define MEMETIC    16
-#define SET_SEED   64
+#include "flags.h"
 
 /* Cool seeds:
  *  763879292910
@@ -29,6 +24,7 @@ usage(const char *prog)
     fprintf(stderr, "\nOPTIONS:\n");
     fprintf(stderr, "\t-v\t  Be verbose\n");
     fprintf(stderr, "\t-S seed\t  Set a seed\n");
+    fprintf(stderr, "\t-T time\t  Set a time limit in floating point seconds\n");
     fprintf(stderr, "\t-a\t  Asymmetric instance\n");
     fprintf(stderr, "\t-s\t  Symmetric instance\n");
     fprintf(stderr, "\t-m\t  Use memetic algorithm [default]\n");
@@ -36,7 +32,7 @@ usage(const char *prog)
 }
 
 static int
-try_openinput(int argc, char *argv[], long int *seed)
+try_openinput(int argc, char *argv[], long int *seed, double *time_limit)
 {
 #ifdef LEAVE
 #undef LEAVE
@@ -50,7 +46,7 @@ try_openinput(int argc, char *argv[], long int *seed)
         usage(argv[0]);
     }
 
-    while ((ch = getopt(argc, argv, "vS:asm")) != -1) {
+    while ((ch = getopt(argc, argv, "vS:T:asm")) != -1) {
         switch (ch) {
         case 'v':
             status |= VERBOSE;
@@ -59,6 +55,11 @@ try_openinput(int argc, char *argv[], long int *seed)
         case 'S':
             status |= SET_SEED;
             *seed = atoll(optarg);
+            break;
+
+        case 'T':
+            status |= TIME_LIMIT;
+            *time_limit = atof(optarg);
             break;
 
         case 'a':
@@ -114,8 +115,9 @@ main(int argc, char *argv[])
 {
     int pinfo;
     long int seed;
+    double time_limit = 0;
 
-    pinfo = try_openinput(argc, argv, &seed);
+    pinfo = try_openinput(argc, argv, &seed, &time_limit);
 
     if (seed_prng(seed, ((pinfo & SET_SEED) ? SEED_REUSE : SEED_NEW),
                 &seed) < 0) {
@@ -125,7 +127,7 @@ main(int argc, char *argv[])
     printf("Seed: %ld\n", seed);
 
     if (pinfo & MEMETIC) {
-        return memetic(pinfo & VERBOSE, pinfo & ASYMMETRIC);
+        return memetic(pinfo, time_limit);
     } else {
         fprintf(stderr, "Not supported.\n");
         return 1;

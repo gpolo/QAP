@@ -20,6 +20,12 @@ struct Individual {
     int cost;
 };
 
-int memetic(int, int);
+struct RecombineInfo {
+    int *index, start;
+};
+
+typedef int (*CondFunc)(double, double, int);
+
+int memetic(int, double);
 
 #endif
