@@ -23,7 +23,8 @@ for _ in xrange(EXECUTIONS):
         elif line.startswith("Generation"):
             gen = int(line.split(':')[1])
 
-    if not all((time_to_best, cost, gen)):
+    if not all((time_to_best, cost)) or gen is None:
+        sys.stderr.write("%s %s %s" % (time_to_best, cost, gen))
         sys.stderr.write("Check your output\n");
         sys.exit(1)
 
