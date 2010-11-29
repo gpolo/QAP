@@ -183,6 +183,8 @@ int main (int argc, char * const argv[])
         _exit(0);
     }
 
+    srand(seed);
+
     qap = Malloc(sizeof(QAP_t));
     qap->nants = nants;
     qap->phero_pers = phero_pers;
