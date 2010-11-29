@@ -176,16 +176,20 @@ encontrada. Se implementado, critérios de parada (linha
 de iterações sem redução de custo. Uma solução é construída com uso da
 função \proc{solução-aleatória}, sendo esta também utilizada em certos
 momentos das metaheurísticas desenvolvidas aqui. Calcular o custo de
-cada solução envolve o uso da Equação \ref{calc-custo}. Logo, para ser
+cada solução envolve o uso da Equação \ref{calc-custo}, cuja
+complexidade computacional é $\Theta(n^2)$. Logo, para ser
 compatível com esta equação, uma solução precisa ser uma das $n!$
 permutações possíveis para uma instância com matrizes de ordem
 $n \times n$.
 
-Falar da complexidade computacional para calcular o custo de solução
-com Equação 1 (O($n^2$))
-
-Falar do significado dessa representação como permutação.
-
+Representar uma solução qualquer na forma de permutação, como por
+exemplo: $[1\,\, 4\,\, 2\,\, 3]$, tem o significado de atribuir a
+instalação 1 na localização 1, instalação 4 na localização 2 e assim
+por diante. De forma geral, a instalação $\pi(i)$ fica
+localizada em $i$. Esta é uma forma simples de representar soluções no
+QAP, sendo necessário cuidados para evitar o custo da Equação
+\ref{calc-custo} caso ela seja modificada em métodos de busca local,
+mas foi utilizada ao longo deste trabalho.
 
 \subsection{ACO}
 
