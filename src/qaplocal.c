@@ -10,11 +10,13 @@
 #include <string.h>
 #include "qaplocal.h"
 #include "qaputil.h"
+#include "util.h"
+#include "memetic.h"
 
 int
-pairwise_exchange_asymmetric_cost(int *perm, int *p, int *a, int *b, int n)
+pairwise_exchange_asymmetric_cost(int i, int j, int *p, int *a, int *b, int n)
 {
-    int i = perm[0], j = perm[1], k;
+    int k;
     int reduction;
 
     reduction = (a[i * n + i]*(b[p[j] * n + p[j]] - b[p[i] * n + p[i]]) +
@@ -32,9 +34,9 @@ pairwise_exchange_asymmetric_cost(int *perm, int *p, int *a, int *b, int n)
 }
 
 int
-pairwise_exchange_symmetric_cost(int *perm, int *p, int *a, int *b, int n)
+pairwise_exchange_symmetric_cost(int i, int j, int *p, int *a, int *b, int n)
 {
-    int i = perm[0], j = perm[1], k;
+    int k;
     int reduction = 0;
 
     for (k = 0; k < n; k++) {
@@ -48,15 +50,19 @@ pairwise_exchange_symmetric_cost(int *perm, int *p, int *a, int *b, int n)
 
 
 int
-local_search(int *p, int *a, int *b, int n, ExchangeCostFunc exchange_cost)
+local_search(struct RecombineInfo *rec, int *p, int *a, int *b, int n,
+        ExchangeCostFunc exchange_cost)
 {
     int best_cost = calc_cost(p, a, b, n);
     int best_reduction, reduction;
-    int swap[2];
+    int swap[2] = {-1, -1};
+
+    int i, j;
 
     while (1) {
         best_reduction = 0;
 
+#if 0
         /* Algorithm L. Specific for t = 2 */
         int j;
         int combination[4] = {0, 1, n, 0};
@@ -66,8 +72,11 @@ local_search(int *p, int *a, int *b, int n, ExchangeCostFunc exchange_cost)
             perm[1] = combination[1];
 
             /* Check the cost of this pairwise interchange. */
-            reduction = exchange_cost(perm, p, a, b, n);
-            if (reduction < best_reduction) {
+            reduction = exchange_cost(perm[0], perm[1], p, a, b, n);
+            if (reduction < best_reduction) { 
+                best_reduction = reduction;
+                memcpy(swap, perm, sizeof(swap));
+            } else if (reduction == best_reduction && RANDOM_UNIT() < 0.1) {
                 best_reduction = reduction;
                 memcpy(swap, perm, sizeof(swap));
             }
@@ -81,6 +90,19 @@ local_search(int *p, int *a, int *b, int n, ExchangeCostFunc exchange_cost)
             if (j == 2)
                 break;
             combination[j]++;
+        }
+#endif
+
+        for (i = rec->start; i < n; i++) {
+            for (j = i + 1; j < n; j++) {
+                reduction = exchange_cost(rec->index[i], rec->index[j],
+                        p, a, b, n);
+                if (reduction < best_reduction) {
+                    best_reduction = reduction;
+                    swap[0] = rec->index[i];
+                    swap[1] = rec->index[j];
+                }
+            }
         }
 
         if (best_reduction < 0) {

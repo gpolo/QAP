@@ -6,6 +6,7 @@
  */
 
 #include <stdio.h>
+#include <stdarg.h>
 #include <string.h>
 #include <stdlib.h>
 #include <sys/resource.h>
@@ -23,6 +24,25 @@ Malloc(size_t size)
     }
     return ptr;
 }
+
+int
+Scanf(int amount, const char *format, ...)
+{
+    int result;
+    va_list ap;
+
+    va_start(ap, format);
+    result = vscanf(format, ap);
+    va_end(ap);
+
+    if (result != amount) {
+        perror("scanf");
+        abort();
+    }
+
+    return result;
+}
+
 
 void
 show_sol(int *sol, int length, int cost)
@@ -97,3 +117,4 @@ distance(int *x, int *y, int n)
     }
     return d;
 }
+

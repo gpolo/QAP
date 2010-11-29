@@ -13,16 +13,21 @@
 #include "qaputil.h"
 #include "qaplocal.h"
 #include "util.h"
+#include "flags.h"
 
-/* XXX Idea: create another initial population if after 500 generations the
- * best cost doesn't change. (Done! Now check how good this is.) */
+struct Individual population[POPSIZE];
+static int pop_initialized = 0;
+static int n = -1; /* Instance size. */
+
 
 static void
-recombine(int *p1, int *p2, int *offspring, int n)
+recombine(int *p1, int *p2, int *offspring, int n, struct RecombineInfo *result)
 {
-    int i;
+    int i, k;
     double j;
     int elem, to_fill[n], used[n], p1_map[n], p2_map[n], index;
+
+    memset(result->index, 1, sizeof(to_fill));
 
     memset(to_fill, 1, sizeof(to_fill));
     memset(used, 0, sizeof(used));
@@ -37,6 +42,7 @@ recombine(int *p1, int *p2, int *offspring, int n)
         } else if (p1[i] == p2[i]) {
             offspring[i] = p1[i];
             to_fill[i] = 0;
+            result->index[i] = 0; /* Fixed position. */
             continue;
         }
 
@@ -68,6 +74,15 @@ recombine(int *p1, int *p2, int *offspring, int n)
             }
         }
     }
+
+    /* Adjust index. */
+    for (k = i = n - 1; i >= 0; i--) {
+        if (result->index[i]) {
+            result->index[k--] = i;
+        }
+    }
+    k++;
+    result->start = k;
 }
 
 static void
@@ -192,7 +207,7 @@ individual_qsort_cmp(const void *a, const void *b)
 
 static void
 initial_pop(struct Individual *population, int *a, int *b, int n,
-        ExchangeCostFunc ecf, int start)
+        ExchangeCostFunc ecf, int start, struct RecombineInfo *recstd)
 {
     int i, j, cost;
     int p[n], r[n];
@@ -203,7 +218,7 @@ initial_pop(struct Individual *population, int *a, int *b, int n,
     for (i = start; i < INITIAL_POPSIZE; i++) {
         memcpy(r, p, sizeof(r));
         random_shuffle(r, n);
-        cost = local_search(r, a, b, n, ecf);
+        cost = local_search(recstd, r, a, b, n, ecf);
         population[i].cost = cost;
         for (j = 0; j < n; j++) population[i].data[j] = r[j];
     }
@@ -211,18 +226,47 @@ initial_pop(struct Individual *population, int *a, int *b, int n,
             individual_qsort_cmp);
 }
 
+int
+cond_limit_time(double used, double limit, int gen)
+{
+    if (used < limit) {
+        return 1;
+    }
+    return 0;
+}
 
 int
-memetic(int verbose, int asymmetric)
+cond_limit_generations(double used, double limit, int gen)
+{
+    if (gen < GENERATIONS) {
+        return 1;
+    }
+    return 0;
+}
+
+int
+memetic(int flags, double time_limit)
 {
     /* XXX verbose not used yet. */
+    int asymmetric = flags & ASYMMETRIC;
+    int verbose = flags & VERBOSE;
+    int use_time_limit = flags & TIME_LIMIT;
+
+    CondFunc cond;
 
     /* Instance data. */
-    int n;
-    scanf("%d", &n);
+    Scanf(1, "%d", &n);
     int a[n][n], b[n][n];
 
     int i, j;
+    struct RecombineInfo recresult, recstd;
+
+    recresult.index = Malloc(n * sizeof(int));
+    recstd.index = Malloc(n * sizeof(int));
+    for (i = 0; i < n; i++) {
+        recstd.index[i] = i;
+    }
+    recstd.start = 0;
 
     ExchangeCostFunc exchange_cost;
 
@@ -242,13 +286,15 @@ memetic(int verbose, int asymmetric)
         population[i].data = Malloc(n * sizeof(int));
     }
 
-    initial_pop(population, MATRIX2D(a), MATRIX2D(b), n, exchange_cost, 0);
-
+    initial_pop(population, MATRIX2D(a), MATRIX2D(b), n, exchange_cost, 0,
+            &recstd);
+    pop_initialized = 1;
 
     struct Individual p1, p2, offspring;
     int popchanged, gens_nochange, k1, k2;
-    int generation = GENERATIONS;
+    int generation = 0;//GENERATIONS;
     int threshold = (n / 2) + (n / 7);
+    double start_time;
     printf("Threshold for mutation: %d\n", threshold);
 
     gens_nochange = 0;
@@ -256,10 +302,25 @@ memetic(int verbose, int asymmetric)
 
     offspring.data = Malloc(n * sizeof(int));
 
-    int best = population[0].cost;
+    double time_to_best;
+    int best = population[0].cost, gen_best = 0;
     int gens_without_best_improve = 0;
 
-    while (generation--) {
+    start_time = current_usertime_secs();
+    time_to_best = 0;
+
+    if (use_time_limit) {
+        cond = cond_limit_time;
+        printf("Time limit: %f\n", time_limit);
+    } else {
+        cond = cond_limit_generations;
+    }
+
+
+    //while (current_usertime_secs() - start_time < time_limit) {
+    while (cond(current_usertime_secs() - start_time, time_limit, generation)) {
+        generation++;
+
         popchanged = 0;
         for (i = 0; i < RECOMBINATIONS; i++) {
             /* Random sample */
@@ -275,7 +336,7 @@ memetic(int verbose, int asymmetric)
             p1 = population[k1];
             p2 = population[k2];
 
-            recombine(p1.data, p2.data, offspring.data, n);
+            recombine(p1.data, p2.data, offspring.data, n, &recresult);
             /* Check if the offspring is different from either p1 or p2. */
             int p1diff = 0, p2diff = 0;
             for (j = 0; j < n; j++) {
@@ -291,7 +352,8 @@ memetic(int verbose, int asymmetric)
             if (!(p1diff & p2diff))
                 continue;
 
-            offspring.cost = local_search(offspring.data,
+            /* XXX To remove the test, change recresult to recstd. */
+            offspring.cost = local_search(&recresult, offspring.data,
                     MATRIX2D(a), MATRIX2D(b), n, exchange_cost);
             /* Insert in the population only if it differs from all the other
              * individuals. */
@@ -322,7 +384,7 @@ memetic(int verbose, int asymmetric)
 
             for (i = 1; i < popsize - 1; i++) {
                 mutate(population[i].data, threshold, n);
-                population[i].cost = local_search(population[i].data,
+                population[i].cost = local_search(&recstd, population[i].data,
                         MATRIX2D(a), MATRIX2D(b), n, exchange_cost);
             }
             /* Reorder population. */
@@ -345,9 +407,11 @@ memetic(int verbose, int asymmetric)
         }
 
         printf("End of generation %d, population size: %d, "
-                "best cost: %d -- %d\n\n",
-                GENERATIONS - generation, popsize, population[0].cost,
+                "best cost: %d -- %d\n",
+                generation, popsize, population[0].cost,
                 gens_without_best_improve);
+        show_sol(population[0].data, n, population[0].cost);
+        printf("\n");
 
 
 #if DEBUG
@@ -363,12 +427,14 @@ memetic(int verbose, int asymmetric)
             if (gens_without_best_improve == 500) {
                 printf("Recreating initial population (keep only the best)!\n");
                 initial_pop(population, MATRIX2D(a), MATRIX2D(b), n,
-                        exchange_cost, 1);
+                        exchange_cost, 1, &recstd);
                 popsize = INITIAL_POPSIZE;
                 gens_without_best_improve = 0;
             }
         } else {
+            time_to_best = current_usertime_secs() - start_time;
             best = population[0].cost;
+            gen_best = generation;
             gens_without_best_improve = 0;
         }
     }
@@ -378,6 +444,11 @@ memetic(int verbose, int asymmetric)
         free(population[i].data);
     }
     free(offspring.data);
+    free(recresult.index);
+    free(recstd.index);
+
+    printf("Best solution found after: %f seconds\n", time_to_best);
+    printf("Cost: %d, Generation: %d\n", best, gen_best);
 
     return 0;
 }
