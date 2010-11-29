@@ -1,55 +1,73 @@
 \section{Introdução}
 
-O PQA (Problema Quadrático de Atribução/Alocação), ou QAP (
-\textit{Quadratic Assignment Problem})\cite{qap-origin} é um dos
+% XXX "facility" pode ser facilidade, mas "facilities" acredito que
+% tenha uma chance menor de ser
+O PQA (Problema Quadrático de Atribuição/Alocação), ou QAP (
+\textit{Quadratic Assignment Problem}) \cite{qap-origin} é um dos
 mais conhecidos e difíceis problemas de otimização combinatória
 \cite{Maniezzo98exactand}. Entre suas aplicações, \cite{QAPBOOK} cita:
-problemas de localização de facilidades, escalonamento, problemas de
+problemas de localização de instalações, escalonamento, problemas de
 fiação em eletrônica, computação paralela e distribuída \cite{22},
 analise estatística de dados, projeto de painéis de controle e teclados,
-química, arqueologia, \textit{balancing turbine runners}, manufatura de
-computadores. Em \cite{hospital} é abordado um problema real onde 30
-facilidades eram associadas a 30 locais no hospital universitário Klinikum
+química, arqueologia, balanceamento de rotores de turbinas,
+manufatura de computadores.
+Em \cite{hospital} é abordado um problema real onde 30
+instalações (\textit{facilities}) eram associadas a 30 locais no
+hospital universitário Klinikum
 Regensburg na Alemanha, problema este que é conhecido hoje como {\it
 Kra30a}, desde que foi incluído na QAPLIB.
 
-% o que é o problema e a dificuldade 
+Coisas a arrumar no parágrafo anterior: \\
+XXX A QAPLIB fala de uma publicação de 1978 sobre os problemas do krarup, por
+que tem esse artigo de 2000 aqui ? XXX
+XXX Não tinha sido dito nada da QAPLIB até agora, ficou estranho
+colocar o nome dela no final do paragráfo XXX
+
 Solucionar um QAP consiste em encontrar a melhor alocação de $n$
 instalações para $n$ localizações. Matematicamente o problema pode ser
 formulado como o de minimizar a seguinte função:
-
  \[ C(\pi) = \sum_{i = 1}^{n} \sum_{j = 1}^{n} f_{ij} d_{\pi(i)
    \pi(j)} \, , \quad \pi \in \prod(n)  \]
 dadas duas matrizes, $F$ e $D$, de ordem $n \times n$, onde $\prod(n)$ é o
 conjunto de todas as permutações de $\{1, \ldots , n\}$.
 
-A matriz $F$ é chamada de matriz de fluxos, onde $f_{ij}$ representa o fluxo de
-material da instalação $i$ para a $j$. A matriz $D$ é chamada de
-matriz de distâncias, com $d_{kl}$ representando a distância da
+Devido a sua dificuldade, trabalhos publicados têm historicamente
+notificado a solução exata de instâncias do QAP somente para valores
+pequenos de $n$, com este variando entre
+10 \cite{qap-origin} e 30 \cite{stutzle04}.
+Por esse motivo, diversos métodos heurísticos têm sido propostos
+para o QAP de modo a rapidamente produzir resultados aceitáveis.
+
+Neste trabalho são utilizadas duas metaheurísticas para atacar este
+problema: \begin{inparaenum}[(1)] \item Otimização por Colônia de
+Formigas, ou {\it Ant Colony Optimization} (ACO) \cite{ACO}, que é
+uma heurística inspirada no comportamento das formigas;
+\item Algoritmo Memético, ou \textit{Memetic Algorithm} (AM) \cite{moscato1},
+que opera baseado em uma população e tenta imitar a evolução
+cultural\end{inparaenum}.
+
+Este artigo foi dividido em três seções (além desta introdução). Na
+sequência é fornecido um embasamento teórico que visa esclarecer
+termos mencionados ao longo do trabalho. Depois discute-se as
+implementações realizadas e finalmente os resultados obtidos são
+apresentados.
+
+XXX No parágrafo anterior, falar sobre os resultados obtidos
+
+
+\section{Fundamentação teórica}
+\label{sec:fund}
+
+% XXX Só movi da introdução pra cá.
+A matriz $F$ é chamada de matriz de fluxos, onde $f_{ij}$ representa o
+fluxo de material da instalação $i$ para a $j$. A matriz $D$ é chamada
+de matriz de distâncias, com $d_{kl}$ representando a distância da
 localização $k$ a $l$. Alguns autores trazem também uma matriz $C$,
 que realiza associação de custos, mas costuma ser ignorada por não
 trazer contribuição significante para a complexidade do  problema
 \cite{QACO}.
 
-Como dito anteriormente o QAP é um dos mais difíceis problemas de
-otimização combinatória, dificuldades camufladas por uma descrição
-simples. Com o {\it hardware} disponível atualmente, algoritmos de solução
-exata tem dificuldades em solucionar instâncias maiores do que $25$ \cite{QACO} e por
-esse motivo diversas heurísticas tem sido propostas para o QAP, que não
-garantem a melhor solução, porém produzem resultados bons em um tempo
-aceitável.
-
-Este trabalho fará um estudo comparativo utilizando duas meta-heuristicas
-como ferramenta para solucionar o QAP. As meta-heuristicas escolhidas
-neste trabalho são: {\it Ant Colony Optimization} (ACO) \cite{ACO}, uma heurística
-inspirada no no comportamento das formigas e {\it Algoritmos Meméticos}
-\cite{moscato1}, uma heurística que tenta imitar a evolução cultural.
-
-Este trabalho está dividido da seguinte maneira: Na Seção \ref{sec:fund}
-xxxx
-
-\section{Fundamentação teórica}
-\label{sec:fund}
+XXX
 
 Detalhar um pouco mais o QAP.
 
@@ -73,6 +91,8 @@ Subseções seguintes.
 \subsection{ACO}
 
 \subsection{Algoritmos Meméticos}
+
+Algoritmos Meméticos \cite{moscato1} são metaheurísticas baseadas em população.
 
 
 
