@@ -24,8 +24,10 @@ manufatura de computadores.
 Solucionar um QAP consiste em encontrar a melhor alocação de $n$
 instalações para $n$ localizações. Matematicamente o problema pode ser
 formulado como o de minimizar a seguinte função:
- \[ C(\pi) = \sum_{i = 1}^{n} \sum_{j = 1}^{n} f_{ij} d_{\pi(i)
-   \pi(j)} \, , \quad \pi \in \prod(n)  \]
+\begin{equation}\label{calc-custo}
+C(\pi) = \sum_{i = 1}^{n} \sum_{j = 1}^{n} f_{ij} d_{\pi(i)
+   \pi(j)} \, , \quad \pi \in \prod(n)
+\end{equation}
 dadas duas matrizes, $F$ e $D$, de ordem $n \times n$, onde $\prod(n)$ é o
 conjunto de todas as permutações de $\{1, \ldots , n\}$.
 
@@ -56,7 +58,16 @@ XXX No parágrafo anterior, falar sobre os resultados obtidos
 \section{Fundamentação teórica}
 \label{sec:fund}
 
-$\mathcal{NP}$-difícil
+O QAP é um problema de otimização classificado como
+$\mathcal{NP}$-difícil, 
+% XXX Seria bom indicar qual trabalho provou isso (NP-dificil)
+portanto desconhece-se um algoritmo de tempo polinomial que resolve
+este problema. Aproximações, para qualquer instância, para este
+problema também foram classificadas como $\mathcal{NP}$-difícil.
+% XXX Essa última frase provavelmente precisa de uma explicação
+% melhor.
+
+...
 
 % XXX Só movi da introdução pra cá.
 A matriz $F$ é chamada de matriz de fluxos, onde $f_{ij}$ representa o
@@ -137,6 +148,44 @@ mais adaptados dos demais para permanecerem na população.
 \section{Implementação}
 
 \subsection{Puramente aleatória}
+
+A obtenção de soluções de instâncias do QAP por meio de um algoritmo
+puramente aleatório é simples. Apesar desta forma de resolução não
+fazer parte na coleta de resultados, ela é útil na discussão a
+respeito da representação de soluções e custos envolvidos.
+
+\begin{codebox}
+\Procname{$\proc{qap-random}(F, D)$}
+\li $\id{melhor-sol} \gets \emptyset$
+\li $\id{melhor-custo} \gets \infty$
+\li \While critérios de parada não satisfeitos \Do \label{criterio-random}
+\li     $\id{sol} \gets \proc{solução-aleatória}()$
+\li	$\id{custo} \gets \proc{calc-custo}(F, D, \id{sol})$
+\li	\If $\id{custo} < \id{melhor-custo}$ \Then
+\li		$\id{melhor-custo} \gets \id{custo}$
+\li		$\id{melhor-sol} \gets \id{sol}$
+        \End
+    \End
+\li \Return ($\id{melhor-sol}, \id{melhor-custo}$)
+\end{codebox}
+
+A função \proc{qap-random} recebe as duas matrizes que descrevem uma
+instância QAP e retorna a melhor solução, com seu respectivo custo,
+encontrada. Se implementado, critérios de parada (linha
+\ref{criterio-random}) podem ser quantidade de iterações ou quantidade
+de iterações sem redução de custo. Uma solução é construída com uso da
+função \proc{solução-aleatória}, sendo esta também utilizada em certos
+momentos das metaheurísticas desenvolvidas aqui. Calcular o custo de
+cada solução envolve o uso da Equação \ref{calc-custo}. Logo, para ser
+compatível com esta equação, uma solução precisa ser uma das $n!$
+permutações possíveis para uma instância com matrizes de ordem
+$n \times n$.
+
+Falar da complexidade computacional para calcular o custo de solução
+com Equação 1 (O($n^2$))
+
+Falar do significado dessa representação como permutação.
+
 
 \subsection{ACO}
 
