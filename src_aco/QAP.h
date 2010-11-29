@@ -41,6 +41,7 @@ struct QAP_solution_t {
     int perm[N];
     int cst;
     int geration;
+    double time;
 };
 
 int QAP_calc_cst(QAP_t *prob, QAP_solution_t *sol);

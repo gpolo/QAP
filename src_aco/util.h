@@ -9,9 +9,14 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/time.h>
+
+#define RANDOM(limit) (lrand48() % (limit))
+#define RANDOM_UNIT() (lrand48())
 
 void *Malloc(size_t);
 double current_user_time_secs(void);
- 
+long int seed_prng();
+
 #endif /* __UTIL_H */
 

@@ -46,7 +46,7 @@ int QAP_check_solution(QAP_t *prob, QAP_solution_t *sol){
 }
 
 void QAP_show_solution(QAP_t *prob, QAP_solution_t *sol){
-    printf("Best solution found after: %lf seconds\n", current_user_time_secs());
+    printf("Best solution found after: %lf seconds\n", sol->time);
     printf("Cost: %d\n", sol->cst);
     printf("Generation: %d\n", sol->geration);
 }

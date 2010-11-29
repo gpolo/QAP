@@ -30,7 +30,7 @@ float phero_min(float pers, int size){
 
 int next_location(set_t *s){
     int i, e;
-    i = rand() % s->size; 
+    i = RANDOM(s->size); 
     e = s->data[i];
     s->data[i] = s->data[s->size - 1];
     s->size--;
@@ -63,7 +63,7 @@ int next_facility(QAP_t *p, set_t *s, int lct){
         prob[i] = pheromone[lct][flt] / delta;       
     }
 
-    x = (double) rand() / INT_MAX;
+    x = (double) RANDOM_UNIT() / INT_MAX;
 
     last = 0;
     for (i = 0; i < s->size; i++) {
@@ -251,6 +251,7 @@ void aco_local_search(QAP_t *prob){
         two_opt(prob, ant[i], function); 
         if (ant[i]->cst < best_solution->cst){
             *best_solution = *ant[i]; 
+            best_solution->time = current_user_time_secs();
         }
     }
 }

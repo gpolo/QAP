@@ -28,3 +28,18 @@ double current_user_time_secs(void){
     systemtime = usage.ru_stime.tv_sec + (usage.ru_stime.tv_usec * 1e-6);
     return (usertime + systemtime);
 }
+
+long int seed_prng()
+{
+    long int gseed;
+    struct timeval tval;
+
+    if (gettimeofday(&tval, NULL) < 0) {
+        perror("gettimeofday");
+        return 1;
+    }
+    gseed = tval.tv_sec * tval.tv_usec;
+
+    return gseed;
+}
+

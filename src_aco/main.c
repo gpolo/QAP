@@ -60,15 +60,16 @@ void usage(const char *prog){
 int main (int argc, char * const argv[])
 {
 
-    int c, nants = 10, i, j, seed, ngenerations = 250, best_know_sol = 0;
+    int c, nants = 10, i, j, ngenerations = 250, best_know_sol = 0;
     unsigned flags = 0;
     float phero_pers = 0.98, time_limit = 180;
     char file_name[MAXNAME], flags_msg[100] = "";
     FILE *file;
     QAP_t *qap;
     QAP_solution_t *sol;
+    long int seed;
 
-    seed = time(NULL);
+    seed = seed_prng();
 
     if (argc < 2){
         usage(argv[0]);       
@@ -183,7 +184,7 @@ int main (int argc, char * const argv[])
         _exit(0);
     }
 
-    srand(seed);
+    srand48(seed);
 
     qap = Malloc(sizeof(QAP_t));
     qap->nants = nants;
