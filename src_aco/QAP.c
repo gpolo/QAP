@@ -6,6 +6,7 @@
  */
 
 #include "QAP.h"
+#include "util.h"
 
 int QAP_calc_cst(QAP_t *prob, QAP_solution_t *sol){
     
@@ -33,24 +34,20 @@ int QAP_check_association(QAP_t *prob, QAP_solution_t *sol){
 }
 
 int QAP_check_solution(QAP_t *prob, QAP_solution_t *sol){
-    int err = 1;
-    if (QAP_calc_cst(prob, sol) != sol->cst){
-        fprintf (stderr, "Error: Cost of the solution is invalid\n");
-        err = -1;
-    }
     if (QAP_check_association(prob, sol) == -1){
         fprintf (stderr, "Error: Association poblem\n");
-        err = -1;
+        return -1;
     }
-    return err;
+    if (QAP_calc_cst(prob, sol) != sol->cst){
+        fprintf (stderr, "Error: Cost of the solution is invalid\n");
+        return -1;
+    }
+    return 1;
 }
 
 void QAP_show_solution(QAP_t *prob, QAP_solution_t *sol){
-    int i;
-    printf("\nSolution Cust: %d  (%d", sol->cst, sol->perm[0] + 1);
-    for (i = 1; i < prob->size; i++){
-        printf (" %d", sol->perm[i] + 1);
-    }
-    printf(")\n\n");
+    printf("Best solution found after: %lf seconds\n", current_user_time_secs());
+    printf("Cost: %d\n", sol->cst);
+    printf("Generation: %d\n", sol->geration);
 }
 

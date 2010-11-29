@@ -19,33 +19,40 @@
 #define MAXNAME 255
 
 void run_info(QAP_t *prob, char *file_name, char *flags_msg, int seed) {
-    printf ("\n");
+    printf ("\n\n");
     printf ("Instance: %s\n", file_name);
     printf ("Problem size: %d\n", prob->size);
     printf ("Seed: %d\n", seed);
     printf ("Number of ants: %d\n", prob->nants);
-    printf ("Number of Generations: %d\n", prob->ngenerations);
     printf ("Pheromone persistence: %0.3f\n", prob->phero_pers);
     printf ("Options:%s\n", flags_msg);
-    printf ("Time Elepsed: %.2lf\n", current_user_time_secs());
+    if (prob->flags & MGENERATION){
+        printf ("Number of Generations: %d\n", prob->ngenerations);
+    }
+    if (prob->flags & TIMESTOP){
+        printf ("Time Limit: %f\n", prob->time_limit);
+    }
+    if (prob->flags & BESTSTOP){
+        printf ("Stop in best know solution: %d\n", prob->best_know_solution);
+    }
+    printf("\n");
 }
 
 void usage(const char *prog){
     fprintf (stderr, "Usage: %s [OPTIONS] qaplibinput.data\n", prog);
     fprintf (stderr, "\nOPTIONS:\n");
-    fprintf (stderr, "  -v\t\t\t\tBe verbose\n"); //xxx implement
-    fprintf (stderr, "  -S seed, --seed seed\t\tSet a seed\n");
-    fprintf (stderr, "  -a, --asymmetric\t\tAsymmetric instance\n");
-    fprintf (stderr, "  -s, --symmetric\t\tSymmetric instance\n");
-    fprintf (stderr, "  -i, --iteration-best\t\tXXXXX\n");
-    fprintf (stderr, "  -I, --best-so-far\t\tXXXXX\n");
-    fprintf (stderr, "  -n num\t\t\tXXXXX\n");
-    fprintf (stderr, "  --number-of-ants num\t\tXXXXX\n");
-    fprintf (stderr, "  -p num\t\t\txxxx\n");
-    fprintf (stderr, "  --pheromone-persistence num\txxxx\n");
-    fprintf (stderr, "  -g num\t\t\txxxx\n");
-    fprintf (stderr, "  --generations num\t\txxxx\n");
-    fprintf (stderr, "  -h, --help\t\t\txxxx\n");
+    fprintf (stderr, "  -v\t\tBe verbose\n");
+    fprintf (stderr, "  -h\t\tHelp\n");
+    fprintf (stderr, "  -S seed\tSet a seed\n");
+    fprintf (stderr, "  -a\t\tAsymmetric instance\n");
+    fprintf (stderr, "  -s\t\tSymmetric instance\n");
+    fprintf (stderr, "  -i\t\tUse iteration best solution to update the pheromone\n");
+    fprintf (stderr, "  -I\t\tUse besto so far solution to update the pheromone\n");
+    fprintf (stderr, "  -n num\tNumber of ants\n");
+    fprintf (stderr, "  -p num\tPheromone persistance\n");
+    fprintf (stderr, "  -g num\tMaximum number of generations\n");
+    fprintf (stderr, "  -t secs\tTime limit\n");
+    fprintf (stderr, "  -b cust\tStop when the cust of best known solution is found\n");
     printf ("\n");
     exit(1);
 }
@@ -53,26 +60,13 @@ void usage(const char *prog){
 int main (int argc, char * const argv[])
 {
 
-    int c, nants = 10, i, j, seed, ngenerations = 250; // xxx seed precisa ser unsigned int?
+    int c, nants = 10, i, j, seed, ngenerations = 250, best_know_sol = 0;
     unsigned flags = 0;
-    float phero_pers = 0.98; 
+    float phero_pers = 0.98, time_limit = 180;
     char file_name[MAXNAME], flags_msg[100] = "";
     FILE *file;
     QAP_t *qap;
     QAP_solution_t *sol;
-
-    struct option options[] = {
-                    {"seed", 1, NULL, 'S'},
-                    {"number-of-ants", 1, NULL, 'n'},
-                    {"pheromone-persistence", 1, NULL, 'p'},
-                    {"iteration-best", 0, NULL, 'i'},
-                    {"best-so-far", 0, NULL, 'I'},
-                    {"hybrid", 0, NULL, 'y'}, // xxx nao suportado ainda
-                    {"generations", 1, NULL, 'g'},
-                    {"asymmetric", 1, NULL, 'a'},
-                    {"symmetric", 1, NULL, 's'},
-                    {"help", 0, NULL, 'h'},
-                    {0, 0, 0, 0}};
 
     seed = time(NULL);
 
@@ -83,39 +77,39 @@ int main (int argc, char * const argv[])
     /* Opções:
      *  S - seed
      *  n - number of ants
-     *  p - pheromone persistence -- interval: [0,1] // xxx: fazer uma checagem do intervalo
+     *  p - pheromone persistence -- interval: [0,1]
      *  i - iteration best used to update pheromone
      *  I - best so for used to update pheromone
-     *  h - hybrid algoritm used to update pheromone 
-     *  g - number of generations
      *  a - Asymmetric QAP 
      *  s - Symmetric QAP
+     *  g - number of generations
+     *  h - help
+     *  t - max time run
+     *  v - verbose
+     *  b - stop when it've found best solution
      */
-    while ((c = getopt_long(argc, argv, ":S:n:p:iIysag:h", options, NULL)) != -1 ){
+    while ((c = getopt(argc, argv, ":S:n:p:iIsag:ht:vb:")) != -1 ){
         switch (c){
             case 'i':
-                if ((flags & PHEUP_BF) || (flags & PHEUP_HY)){
-                    fprintf (stderr, "apenas um metodo para atualizar o feromonio\n"); /// xxxx traduzir depois  
+                if (flags & PHEUP_BF){
+                    fprintf (stderr, "Choose only one method for updating the pheromone\n");
                     _exit(1);
                 }
                 flags |= PHEUP_IB;
                 strcat (flags_msg, " PHEUP_IB");
                 break;
             case 'I':
-                if ((flags & PHEUP_IB) || (flags & PHEUP_HY)){
-                    fprintf (stderr, "apenas um metodo para atualizar o feromonio\n"); /// xxxx traduzir depois  
+                if (flags & PHEUP_IB){
+                    fprintf (stderr, "Choose only one method for updating the pheromone\n");
                     _exit(1);
                 }
                 flags |= PHEUP_BF;
                 strcat (flags_msg, " PHEUP_BF");
                 break;
-            case 'y':
-                flags |= PHEUP_HY; //xxx checar se mais de uma opção foram assinaladas
-                fprintf (stderr, "nao implementado ainda\n");
-                _exit(1);
-                break;
             case 'g':
                 ngenerations = atoi(optarg);
+                flags |= MGENERATION;
+                strcat (flags_msg, " MGENERATION");
                 break;
             case 'S':
                 seed = atoi(optarg);
@@ -125,9 +119,6 @@ int main (int argc, char * const argv[])
                 break;
             case 'p':
                 phero_pers = atof(optarg);
-                break;
-            case ':':
-                printf("option required for '%c'\n", optopt);
                 break;
             case 's':
                 if (flags & ASYMMETRIC){
@@ -145,11 +136,28 @@ int main (int argc, char * const argv[])
                 flags |= ASYMMETRIC;
                 strcat (flags_msg, " ASYMMETRIC");
                 break;
+            case 't':
+                time_limit = atof(optarg);
+                flags |= TIMESTOP;
+                strcat (flags_msg, " TIMESTOP");
+                break;
+            case 'b':
+                best_know_sol = atoi(optarg);
+                flags |= BESTSTOP;
+                strcat (flags_msg, " BESTSTOP");
+                break;
+            case 'v':
+                strcat (flags_msg, " VERBOSE");
+                flags |= VERBOSE;
+                break;
             case 'h':
                 usage(argv[0]);
                 break;
             case '?':
                 fprintf (stderr, "unknow option '%c'\n", optopt);
+                break;
+            case ':':
+                printf("option required for '%c'\n", optopt);
                 break;
         }
     }
@@ -162,7 +170,6 @@ int main (int argc, char * const argv[])
         flags |= PHEUP_IB;       
     }
 
-    // xxx ler mais do que um arquivo 
     if (argc == optind){
         fprintf (stderr, "no input file\n");       
         _exit(0);
@@ -181,6 +188,8 @@ int main (int argc, char * const argv[])
     qap->phero_pers = phero_pers;
     qap->flags = flags;
     qap->ngenerations = ngenerations;
+    qap->best_know_solution = best_know_sol;
+    qap->time_limit = time_limit;
 
     fscanf (file, "%d", &qap->size); 
     for (i = 0; i < qap->size; i++)

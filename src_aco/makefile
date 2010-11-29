@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -ggdb -D DEBUG -lm
+CFLAGS = -Wall -O2 -lm
 OBJS = main.o ant.o QAP.o util.o
 BIN = main
 

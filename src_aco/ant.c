@@ -17,7 +17,7 @@ QAP_solution_t *best_solution;
 
 double pheromone[N][N];
 float avg;
-float prob_best = 0.005; // xxx se isso influenciar muito o problema, permitir que se passe como paramentro
+float prob_best = 0.005; 
 
 float phero_max(float pers){
     return (1.0 / (1 - pers )) * (1.0 / best_solution->cst);
@@ -104,7 +104,6 @@ QAP_solution_t *ant_build_solution(QAP_t *p){
         sol->perm[lct] = flt;
     }
 
-    // xxx melhorar isso
     sol->cst = 0;
     for (i = 0; i < p->size; i++){
         for (j = i;  j < p->size; j++){
@@ -159,7 +158,7 @@ void aco_update_pheromones(QAP_t *prob){
 
     if (prob->flags & PHEUP_IB){
         best_ant = ant[ite_best_ant(prob)]; 
-    } else { // xxx ainda não tem o hibrido
+    } else { 
         best_ant = best_solution;
     }
 
@@ -222,7 +221,7 @@ void two_opt(QAP_t *prob, QAP_solution_t *sol, calc_reduction_exchange calc_redu
         max_gain = 0;
         for (i = 0; i < prob->size; i++){
             for (j = i + 1; j < prob->size; j++){
-                gain = calc_reduction (prob, sol, i, j);     
+                gain = calc_reduction (prob, sol, i, j);    /* obs: gain na verdade é o custo da reduçao */ 
                 if (gain < max_gain){
                     max_gain = gain;
                     i_max = i;
@@ -230,20 +229,17 @@ void two_opt(QAP_t *prob, QAP_solution_t *sol, calc_reduction_exchange calc_redu
                 }
             }
         }
-        /*printf("Current Best %d maxgain %d troca: %d %d\n", best_solution->cst, max_gain, i_max, j_max);
-        for (i = 0; i < prob->size; i++){
-            printf ("%d ", sol->perm[i]);       
-        }
-        printf ("\n");
-        */
 
         if (max_gain == 0) break;
+
+        if (prob->flags & VERBOSE){
+            printf("2OPT -- Reduction %d  Change Facility: %d %d\n", max_gain, sol->perm[i_max], sol->perm[j_max]);
+        }
 
         aux = sol->perm[i_max];
         sol->perm[i_max] = sol->perm[j_max];
         sol->perm[j_max] = aux;
         sol->cst += max_gain;
-        printf("cust: %d\n", sol->cst);
     }
 }
 
@@ -259,21 +255,34 @@ void aco_local_search(QAP_t *prob){
     }
 }
 
+int stop_condition(QAP_t *prob, int geration){
+    if ((prob->flags & MGENERATION) && prob->ngenerations <= geration) return 1;
+    if ((prob->flags & TIMESTOP) && prob->time_limit <= current_user_time_secs()) return 1;
+    if ((prob->flags & BESTSTOP) && best_solution->cst <= prob->best_know_solution) return 1;
+    return 0;
+}
+
 QAP_solution_t *aco(QAP_t *prob){
     int i;
     QAP_solution_t *sol;
     ant_system_init(prob);
-    for (i = 0; i < prob->ngenerations; i++) {
+    for (i = 0; !stop_condition(prob, i); i++) {
         ant_construct_solutions(prob);
         aco_local_search(prob);
         aco_update_pheromones(prob);
-        printf ("Current Best solution: %d -- Generation %d\n", best_solution->cst, i);
+
+        if (prob->flags & VERBOSE){
+            printf("\nGeneration %d -- Best Cost %d\n\n", i, best_solution->cst);
+        } else {
+            printf(".");    
+            fflush(stdout);
+        }
     }
 
-    QAP_check_solution(prob, best_solution);
-    printf("Custo dela: %d\n", QAP_calc_cst(prob, best_solution));
+    //QAP_check_solution(prob, best_solution);
 
     sol = Malloc(sizeof(QAP_solution_t));
     *sol = *best_solution;
+    sol->geration = i;
     return sol;
 }
