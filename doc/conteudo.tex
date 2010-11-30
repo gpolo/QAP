@@ -56,7 +56,7 @@ XXX No parágrafo anterior, falar sobre os resultados obtidos
 
 
 \section{Fundamentação teórica}
-\label{sec:fund}
+\label{sec:teorico}
 
 O QAP é um problema de otimização classificado como
 $\mathcal{NP}$--difícil,
@@ -227,8 +227,7 @@ era evitar a estagnação precoce, o que faz com que todas as formigas sigam
 sempre o mesmo caminho e parem de explorar o espaço de busca. Como principal
 modificação para atingir esse objetivo, o $\mathcal{MMax}$ delimita um
 intervalo para o feromônio $\tau_{min} \le \tau_{ij} \le \tau_{max}$,
-e assim evita que uma componente de solução acumule muito feromônio,
-% xxx melhorar isso 
+e assim evita que uma componente de solução acumule muito feromônio, % xxx melhorar isso 
 o que levaria as formigas a sempre escolherem ela.
 
 \subsection{Algoritmos Meméticos}
@@ -254,9 +253,10 @@ também menciona que:
 \end{quote}
 Com estas analogias à AM deve ser possível observar que a mutação, ao
 contrário de algoritmos genéticos (AG), não é um operador
-característico desta metaheurística.
-% XXX Colocar em algum lugar que AM também é conhecido como genético
-% híbrido
+característico desta metaheurística e é aplicado de forma
+independente. Algoritmos Meméticos também são chamados de ``algoritmos
+genéticos híbridos'', por apresenteram semelhanças com AG mas
+trabalham com ótimos locais.
 
 Neste método, uma população (um conjunto de soluções, ou cromossomos
 em AG, factíveis) é
@@ -273,6 +273,9 @@ Ao estabelecer um limite para o tamanho do conjunto de soluções,
 torna-se necessário o uso de uma função que seleciona os indivíduos
 mais adaptados dos demais para permanecerem na população.
 
+O elemento fundamental no projeto de um AM é o tratamento dos
+indivíduos. Representar estes de forma adequada possibilita o
+funcionamento desta metaheurística.
 
 \section{Implementação}
 
@@ -518,8 +521,20 @@ um limite inferior estabelecido. Melhor valor para Kra32 foi corrigido}
   \end{tabular}
 \end{table}
 
+Na Tabela \ref{qapinst}, a parte numérica dos itens da primeira coluna
+identifica o tamanho da instância. As duas últimas colunas, fd(A) e
+dd(B), representam, respectivamente, o predomínio de fluxo da matriz A
+e o predomínio de distância da matriz B. Como mencionado na Seção
+\ref{sec:teorico}, valores altos (maior que 100) para estes elementos
+indica instâncias com maior probabilidade de terem o melhor valor
+encontrado.
+
+Cada instância foi executada 22 vezes para cada implementação. Foi
+estabelecido um tempo limite de 3 minutos para execução. A
+Tabela \ref{resultados} apresenta os resultados obtidos.
+
 \begin{table}[H]
-  \caption{XXX Resultados XXX}
+  \caption{XXX Resultados XXX \label{resultados}}
   \centering
   \begin{tabular}{l r r r r r r}
     \toprule
@@ -553,5 +568,3 @@ um limite inferior estabelecido. Melhor valor para Kra32 foi corrigido}
 \end{table}
 
 ...
-Cada instância foi executada 22 vezes com tempo limite de 3 minutos.
-..
