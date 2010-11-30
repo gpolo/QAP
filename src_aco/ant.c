@@ -240,6 +240,8 @@ void two_opt(QAP_t *prob, QAP_solution_t *sol, calc_reduction_exchange calc_redu
         sol->perm[i_max] = sol->perm[j_max];
         sol->perm[j_max] = aux;
         sol->cst += max_gain;
+
+        if ((prob->flags & BESTSTOP) && (sol->cst == prob->best_know_solution)) break;
     }
 }
 
@@ -252,6 +254,7 @@ void aco_local_search(QAP_t *prob){
         if (ant[i]->cst < best_solution->cst){
             *best_solution = *ant[i]; 
             best_solution->time = current_user_time_secs();
+            if ((prob->flags & BESTSTOP) && (best_solution->cst == prob->best_know_solution)) break;
         }
     }
 }
