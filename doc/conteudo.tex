@@ -50,9 +50,8 @@ Este artigo foi dividido em três seções (além desta introdução). Na
 sequência é fornecido um embasamento teórico que visa esclarecer
 termos mencionados ao longo do trabalho. Depois discute-se as
 implementações realizadas e finalmente os resultados obtidos são
-apresentados.
-
-XXX No parágrafo anterior, falar sobre os resultados obtidos
+apresentados. Entre as instâncias utilizadas, apenas uma dela não teve
+o melhor valor conhecido alcançado. % XXX
 
 
 \section{Fundamentação teórica}
@@ -530,11 +529,15 @@ indica instâncias com maior probabilidade de terem o melhor valor
 encontrado.
 
 Cada instância foi executada 22 vezes para cada implementação. Foi
-estabelecido um tempo limite de 3 minutos para execução. A
+estabelecido um tempo limite de 3 minutos para execução.
+Para a implementação do AM, o tamanho da população inicial foi fixada
+em 42 e permite-se a expansão para até o tamanho de 50 indivíduos. A
+quantidade de recombinações realizadas por geração foi fixada em 30.
+Para o ACO, ... XXX
 Tabela \ref{resultados} apresenta os resultados obtidos.
 
 \begin{table}[H]
-  \caption{XXX Resultados XXX \label{resultados}}
+  \caption{Resultados \label{resultados}}
   \centering
   \begin{tabular}{l r r r r r r}
     \toprule
@@ -566,5 +569,32 @@ Tabela \ref{resultados} apresenta os resultados obtidos.
     \bottomrule
   \end{tabular}
 \end{table}
+
+A segunda coluna da Tabela \ref{resultados} indica em quantas
+execuções, do total de 22, cada implementação conseguiu chegar ao
+melhor valor conhecido. A terceira coluna é uma média das distâncias
+ao melhor valor daquelas execuções que não chegaram a este ótimo. A
+próxima coluna refere-se ao tempo médio para encontrar o melhor valor,
+sendo que este tempo é inexistente para situações onde tal valor não
+foi obtido. As últimas 3 colunas têm o mesmo significado das 3 que as
+antecedem.
+
+De modo geral, as duas metaheurísticas demonstraram bons
+resultados. Apenas a instância \verb!Tai60a! ficou entre 1\% e 2\% do
+melhor valor conhecido, curiosamente na faixa que o trabalho de
+\cite{taillard1} menciona para instâncias difíceis. A \verb!Tai60a! é
+assim considerada pois os valores de fd(A) e fd(B), Tabela
+\ref{qapinsts}, para esta instância são igualmente baixos.
+Outra instância difícil é a \verb!Tai25a!, onde a ACO não chegou ao
+melhor valor nenhuma vez. Apesar da metaheurística AM ter conseguido
+alcançar o ótimo nas 22 execuções para esta instância, nota-se que
+houve uma certa dificuldade. Em comparação a instâncias de tamanho
+semelhante, o tempo médio para a \verb!Tai25a! ficou bastante alto.
+% XXX Por que a ACO não conseguiu trabalhar certo com a Tai60b? XXX
+
+Em relação ao tempo de execução, o Algoritmo Memético apresentou
+vantagem em todos os casos. Uma razão para isso é a forma com que a
+busca local foi realizada. O espaço de trocas possíveis é reduzido
+conforme indivíduos mais semelhantes vão sendo recombinados.
 
 ...
