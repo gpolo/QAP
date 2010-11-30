@@ -38,7 +38,7 @@ def extract_data(data, aco=False):
         for _ in xrange(EXECUTIONS):
             line = data.next()
             time, cost, gen = line.split()
-            if int(cost) == INSTANCE[instance]:
+            if int(cost) <= INSTANCE[instance]:
                 info[instance]['nbest'] += 1
                 info[instance]['avg_time_best'] += float(
                         time.replace(',', '.'))
@@ -97,10 +97,11 @@ def main(am, aco):
     for inst in instances:
         am_info = am_data[inst]
         aco_info = aco_data[inst]
-        print "%s & %d/22 & %.4f & %s & %d/22 & %.4f & %s \\\\" % (
+        print "%s & %d/22 & %s & %s & %d/22 & %s & %s \\\\" % (
                 inst[0].upper() + inst[1:],
-                am_info['nbest'], am_info['avg_deviation'], get_time(am_info),
-                aco_info['nbest'], aco_info['avg_deviation'],
+                am_info['nbest'], comma("%.4f" % am_info['avg_deviation']),
+                get_time(am_info),
+                aco_info['nbest'], comma("%.4f" % aco_info['avg_deviation']),
                 get_time(aco_info))
 
 
