@@ -109,7 +109,7 @@ Subseções seguintes.
 Algoritmos Meméticos \cite{moscato1} são metaheurísticas baseadas
 em população e evolução cultural.
 Seu nome é derivado do termo \textit{meme} \cite{dawkins}, que é
-definido por \cite{oxford-dict} como um elemento cutural que consegue
+definido por \cite{oxford-dict} como um elemento cultural que consegue
 replicar-se por meios não-genéticos, como a imitação.
 %an element of a culture or system of behaviour that may be considered
 %to replicate by passing from one individual to another by nongenetic
@@ -121,8 +121,8 @@ a partir do conhecimento formado por cada mestre. Este mesmo trabalho
 também menciona que:
 \begin{quote}
 \textit{``A scientist does not pass on an idea after blending it with
-  with his own without checking the logic of what he is saying or his
-  reputation would be in trouble. Altough there there are some
+  his own without checking the logic of what he is saying or his
+  reputation would be in trouble. Altough there are some
   exceptions, science does not improve by random errors.''}
 \end{quote}
 Com estas analogias à AM deve ser possível observar que a mutação, ao
@@ -206,21 +206,22 @@ A forma geral do AM desenvolvido é:
 \li	    $\proc{insere-ordenado}(pop, \proc{busca-local}(F, D, r))$
 	\End
 \li	\If $\proc{convergiu(pop)}$ \Then
-\li	    $\proc{mutacionar}(pop[2:])$
+\li	    $\proc{mutacionar}(pop[2:])$ \label{am-mutate}
 	\End
 \li     \If $\proc{estagnou}()$ \Then
 \li         $\id{pop} \gets \id{pop}[1] \cup \proc{população-inicial}(F, D)$
         \End
     \End
-\li \Return $(\id{pop}[1])$
+\li \Return $\id{pop}[1]$
 \end{codebox}
 
 A população inicial, linha \ref{popinit}, é criada de forma puramente
 aleatória, mas a
 \proc{busca-local} é utilizada em todos os indivíduos gerados. Essa
 população é mantida em ordem crescente de custo, de modo que a
-primeira ali contida ($\id{pop}[1]$) sempre contenha a melhor solução
-encontrada.
+primeira ali contida ($\id{pop}[1]$) sempre indique a melhor solução
+encontrada. O tamanho desta população é variável, atualmente iniciando
+com um valor um pouco abaixo do máximo permitido.
 
 Como critérios de paradas, linha \ref{am-criterios}, são aceitos:
 quantidade de gerações, tempo máximo de execução, valor atingido. Essa
@@ -238,11 +239,12 @@ local. Dois detalhes estão envolvidos nesta operação de
 inserção: \begin{inparaenum}[(1)] \item a
 variável $\id{pop}$ é tratada como um conjunto, portanto
 soluções já existentes são descartadas; \item um novo indivíduo é
-inserido na população somente se esta já não estiver em seu limite ou se o
-mesmo não for pior que o pior atual\end{inparaenum}. O operador de
-recombinação (função \proc{recombinar}) foi implementado de forma
-bastante semelhante com aquele descrito em \cite{merz_freisleben} e a
-Figura \ref{fig:recomb-op} demonstra seu funcionamento.
+inserido na população somente se esta já não estiver em seu tamanho
+limite ou se o mesmo não for pior que o pior atual\end{inparaenum}. O
+operador de recombinação (função \proc{recombinar}) foi implementado
+de forma bastante semelhante com aquele descrito em
+\cite{merz_freisleben} e a Figura \ref{fig:recomb-op} demonstra seu
+funcionamento.
 
 \begin{figure}
   \centering
@@ -251,11 +253,85 @@ Figura \ref{fig:recomb-op} demonstra seu funcionamento.
     indivíduos\label{fig:recomb-op}}
 \end{figure}
 
-Oi
+Na Figura \ref{fig:recomb-op}, as soluções \verb!A! e \verb!B! foram
+escolhidas para serem recombinadas. A função \proc{recombinar} passa
+por todas as posições, da esquerda para a direita, destes
+indivíduos. Logo na primeira posição, a função encontra os valores 1 e
+5. Por serem diferentes, aleatoriamente escolhe-se entre copiar um dos
+valores para o resultado final. No exemplo, o valor 1 foi
+copiado. Depois de realizar essa cópia, o seguinte processo é feito
+para garantir que não haja mutações: \begin{inparaenum}[(1)] \item
+  verifica se o elemento não copiado faz parte do resultado; \item
+  caso não faça, encontra-se a respectiva posição em \verb!A! do
+  mesmo; \item copia este valor na mesma posição no resultado
+  final; \item elemento não copiado passa a ser o da posição atual de
+  \verb!A!; \item volta para o primeiro passo enquanto este elemento
+  não copiado não fizer parte da solução\end{inparaenum}.
+Com isso, os valores 5 e 3 são copiados antes do elemento não copiado
+tornar-se o valor 1 que já faz parte da solução. Um processo análogo é
+feito quando seleciona-se um valor de \verb!B! para ser
+copiado. Seguindo na passagem da esquerda para direita,
+\proc{recombinar} encontra o valor 2 nos dois indivíduos e portanto
+apenas copia o mesmo para o resultado. Na próxima posição escolhe-se o
+valor 6 de \verb!B! para ser copiado, ocasionando também a inserção de
+8 e depois 4. Avançando mais uma posição, o algoritmo encontra que a
+mesma já foi preenchida com algum valor e não faz nada. Os demais
+passos repetem o que já foi descrito.
 
-Oi
+Internamente é mantido uma variável que identifica se a população foi
+modificada por meio de recombinações ou não. Caso os elementos
+produzidos com este operador não apresente nada diferente para a
+população, um contador é incrementado; caso contrário este mesmo
+contador é definido em 0. Isso é utilizado como um critério de
+convergência. O outro critério é calculado, em todas as gerações, da
+seguinte forma:
+\begin{equation}\label{D}
+D = \frac{\sum\limits_{i = 1}^{|pop|} \sum\limits_{j = i + 1}^{|pop|} dist(pop[i],
+  pop[j])}{\frac{|pop| (|pop| - 1)}{2}}
+\end{equation}
+onde $dist$ retorna a quantidade de posições, em duas soluções, que
+não possuem o mesmo valor; na Figura \ref{fig:recomb-op} isso ocorre
+nas posições 1, 3, 4, 6, 7, 8 e portanto $dist(A, B) = 6$. O valor
+retornado por $|pop|$ é o tamanho atual da população. Com isso, caso o
+valor de $D$ fique abaixo de um limite, ou o outro critério seja
+satisfeito, o operador de mutação, linha \ref{am-mutate} de
+\proc{qap-memético}, é utilizado.
 
-Oi
+Na mutação preserva-se somente a melhor solução, indicado pela notação
+de \textit{slice} (tomado da linguagem de programação \texttt{Python})
+na linha \ref{am-mutate}. Um detalhe de implementação é que o pior
+elemento também é preservado, diferindo um pouco do método descrito em
+\cite{merz_freisleben}, de modo a tentar diversificar um pouco mais a
+população. A implementação deste operador baseia-se no tamanho da
+instância e também no valor limiar,
+que decide se $D$, da Equação \ref{D}, é baixo ou não, para definir o
+quão modificado será cada indivíduo. Atualmente o limiar é calculado
+como: $\lfloor\frac{n}{2}\rfloor
++\lfloor\frac{n}{7}\rfloor$, onde $n$ é o tamanho da
+instância. Então, para definir a que
+distância ($dist$ na Equação \ref{D}) a solução com mutação deverá
+ficar da original é calculado o valor $m = n -
+\left\lfloor\frac{limiar}{5} + 0.5\right\rfloor$. Com os detalhes
+resolvidos, este operador prossegue da seguinte
+forma: \begin{inparaenum}[(1)] \item seleciona uma posição $p_1$ entre 1 e
+  $n$; \item seleciona uma posição $p_2$ entre 1 e $n$ que ainda não
+  foi escolhida; \item troca os elementos das respectivas posições; \item
+  $p_2 = p_1$; \item se a
+  distância entre a solução original e a nova for menor que $m$, volta
+  para o passo 2\end{inparaenum}. Ao término deste processo, a busca
+local é aplicada no indivíduo. Note que com todas as mutações
+realizadas a população pode ser, neste momento, reduzida devido a dois
+ou mais indivíduos apresentarem a mesma solução.
+
+Agora resta apenas definir o que foi implementado para
+$\proc{estagnou}$. Como uma alternativa mais brusca a mutação, essa
+função foi desenvolvida. Os possíveis resultados desta função
+encontra-se no domínio booleano, sendo seu resultado verdadeiro ou
+falso de acordo com um outro contador interno. Foi determinado que
+caso 500 gerações consecutivas não causem a determinação de uma
+solução melhor, então a população estagnou. Quando isso ocorre,
+descarta-se a população atual e cria-se outra, mas salva-se o
+melhor indivíduo para fazer parte deste novo conjunto de soluções.
 
 
 \section{Resultados}
