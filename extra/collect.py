@@ -7,8 +7,6 @@ if len(sys.argv) < 2:
 
 EXECUTIONS = 22
 
-collected_data = []
-
 for _ in xrange(EXECUTIONS):
     p = subprocess.Popen(sys.argv[1:], stdout=subprocess.PIPE)
     data_stdout = p.communicate()[0]

@@ -49,16 +49,18 @@ def do_executions(args):
         print "%s\t%d\t%d" % (str(time_to_best).replace('.', ','), cost, gen)
 
 
-for inst, best in INSTANCES_SYMMETRIC.iteritems():
-    n = re.findall(r'\d+', inst)[0]
-    args = [ACO, '-s', '-I', '-p', '0.8', '-n', n, '-t', '180',
+for inst, best in sorted(INSTANCES_SYMMETRIC.items()):
+    #n = re.findall(r'\d+', inst)[0]
+    #args = [ACO, '-s', '-I', '-p', '0.8', '-n', n, '-t', '180',
+    args = [ACO, '-s', '-i', '-p', '0.95', '-n', '50', '-t', '180',
             '-b', str(best), "../data/%s.dat" % inst] # DATA_DIR XXX
     do_executions(args)
     print
 
-for inst, best in INSTANCES_ASYMMETRIC.iteritems():
-    n = re.findall(r'\d+', inst)[0]
-    args = [ACO, '-a', '-I', '-p', '0.8', '-n', n, '-t', '180',
+for inst, best in sorted(INSTANCES_ASYMMETRIC.items()):
+    #n = re.findall(r'\d+', inst)[0]
+    #args = [ACO, '-a', '-I', '-p', '0.8', '-n', n, '-t', '180',
+    args = [ACO, '-a', '-i', '-p', '0.9', '-n', '50', '-t', '180',
             '-b', str(best), "../data/%s.dat" % inst] # DATA_DIR XXX
     do_executions(args)
     print
