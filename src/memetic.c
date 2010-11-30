@@ -246,9 +246,8 @@ cond_limit_generations(double used, double limit, int gen)
 }
 
 int
-memetic(struct ParseResult *pinfo)//int flags, double time_limit)
+memetic(struct ParseResult *pinfo)
 {
-    /* XXX verbose not used yet. */
     int asymmetric = pinfo->flags & ASYMMETRIC;
     int verbose = pinfo->flags & VERBOSE;
     int use_time_limit = pinfo->flags & TIME_LIMIT;
@@ -333,7 +332,6 @@ memetic(struct ParseResult *pinfo)//int flags, double time_limit)
     }
 
 
-    //while (current_usertime_secs() - start_time < time_limit) {
     while (cond(current_usertime_secs() - start_time, time_limit, generation)) {
         generation++;
 
