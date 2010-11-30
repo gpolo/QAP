@@ -1,7 +1,5 @@
 \section{Introdução}
 
-% XXX "facility" pode ser facilidade, mas "facilities" acredito que
-% tenha uma chance menor de ser
 O PQA (Problema Quadrático de Atribuição/Alocação), ou QAP (
 \textit{Quadratic Assignment Problem}) \cite{qap-origin} é um dos
 mais conhecidos e difíceis problemas de otimização combinatória
@@ -9,25 +7,27 @@ mais conhecidos e difíceis problemas de otimização combinatória
 problemas de localização de instalações, escalonamento, problemas de
 fiação em eletrônica, computação paralela e distribuída \cite{22},
 analise estatística de dados, projeto de painéis de controle e teclados,
-química, arqueologia, balanceamento de rotores de turbinas,
+química, arqueologia, balanceamento de rotores de turbinas e
 manufatura de computadores.
-Em \cite{hospital} é abordado um problema real onde 30
-instalações (\textit{facilities}) eram associadas a 30 locais no
-hospital universitário Klinikum
-Regensburg na Alemanha, problema este que é conhecido hoje como {\it
-Kra30a}, desde que foi incluído na QAPLIB.
+% Em \cite{hospital} é abordado um problema real onde 30
+% instalações (\textit{facilities}) eram associadas a 30 locais no
+% hospital universitário Klinikum
+% Regensburg na Alemanha, problema este que é conhecido hoje como {\it
+% Kra30a}, desde que foi incluído na QAPLIB.
 
-Coisas a arrumar no parágrafo anterior: \\
-XXX A QAPLIB fala de uma publicação de 1978 sobre os problemas do krarup, por
-que tem esse artigo de 2000 aqui ? XXX
-XXX Não tinha sido dito nada da QAPLIB até agora, ficou estranho
-colocar o nome dela no final do paragráfo XXX
+%Coisas a arrumar no parágrafo anterior: \\
+%XXX A QAPLIB fala de uma publicação de 1978 sobre os problemas do krarup, por
+%que tem esse artigo de 2000 aqui ? XXX
+%XXX Não tinha sido dito nada da QAPLIB até agora, ficou estranho
+%colocar o nome dela no final do paragráfo XXX
 
 Solucionar um QAP consiste em encontrar a melhor alocação de $n$
 instalações para $n$ localizações. Matematicamente o problema pode ser
 formulado como o de minimizar a seguinte função:
- \[ C(\pi) = \sum_{i = 1}^{n} \sum_{j = 1}^{n} f_{ij} d_{\pi(i)
-   \pi(j)} \, , \quad \pi \in \prod(n)  \]
+\begin{equation}\label{calc-custo}
+C(\pi) = \sum_{i = 1}^{n} \sum_{j = 1}^{n} f_{ij} d_{\pi(i)
+   \pi(j)} \, , \quad \pi \in \prod(n)
+\end{equation}
 dadas duas matrizes, $F$ e $D$, de ordem $n \times n$, onde $\prod(n)$ é o
 conjunto de todas as permutações de $\{1, \ldots , n\}$.
 
@@ -38,11 +38,11 @@ pequenos de $n$, com este variando entre
 Por esse motivo, diversos métodos heurísticos têm sido propostos
 para o QAP de modo a rapidamente produzir resultados aceitáveis.
 
-Neste trabalho são utilizadas duas metaheurísticas para atacar este
-problema: \begin{inparaenum}[(1)] \item Otimização por Colônia de
-Formigas, ou {\it Ant Colony Optimization} (ACO) \cite{ACO}, que é
+Neste trabalho, a abordagem ao problema ocorre com uso de duas
+metaheurísticas: \begin{inparaenum}[(1)] \item Otimização por Colônia
+  de Formigas, ou {\it Ant Colony Optimization} (ACO) \cite{ACO}, que é
 uma heurística inspirada no comportamento das formigas;
-\item Algoritmo Memético, ou \textit{Memetic Algorithm} (AM) \cite{moscato1},
+\item Algoritmo Memético (AM), ou \textit{Memetic Algorithm}\cite{moscato1},
 que opera baseado em uma população e tenta imitar a evolução
 cultural\end{inparaenum}.
 
@@ -58,6 +58,17 @@ XXX No parágrafo anterior, falar sobre os resultados obtidos
 \section{Fundamentação teórica}
 \label{sec:fund}
 
+O QAP é um problema de otimização classificado como
+$\mathcal{NP}$-difícil, 
+% XXX Seria bom indicar qual trabalho provou isso (NP-dificil)
+portanto desconhece-se um algoritmo de tempo polinomial que resolve
+este problema. Aproximações, para qualquer instância, para este
+problema também foram classificadas como $\mathcal{NP}$-difícil.
+% XXX Essa última frase provavelmente precisa de uma explicação
+% melhor.
+
+...
+
 % XXX Só movi da introdução pra cá.
 A matriz $F$ é chamada de matriz de fluxos, onde $f_{ij}$ representa o
 fluxo de material da instalação $i$ para a $j$. A matriz $D$ é chamada
@@ -70,6 +81,9 @@ trazer contribuição significante para a complexidade do  problema
 XXX
 
 Detalhar um pouco mais o QAP.
+
+Falar de como o problema pode ser representado e também como uma
+solução é representada neste trabalho.
 
 Falar do custo de utilizar métodos para solução exata e
 por isso formas alternativas tem sido utilizadas.
@@ -92,11 +106,94 @@ Subseções seguintes.
 
 \subsection{Algoritmos Meméticos}
 
-Algoritmos Meméticos \cite{moscato1} são metaheurísticas baseadas em população.
+Algoritmos Meméticos \cite{moscato1} são metaheurísticas baseadas
+em população e evolução cultural.
+Seu nome é derivado do termo \textit{meme} \cite{dawkins}, que é
+definido por \cite{oxford-dict} como um elemento cutural que consegue
+replicar-se por meios não-genéticos, como a imitação.
+%an element of a culture or system of behaviour that may be considered
+%to replicate by passing from one individual to another by nongenetic
+%means, esp. imitation (página 271 do dicionário)
+O trabalho de \cite{moscato1} faz uma comparação entre algoritmos
+meméticos e artes marciais, tratando os movimentos coordenados e
+eficazes dos mestres do Kung-Fu como algo que foi sendo aperfeiçoado
+a partir do conhecimento formado por cada mestre. Este mesmo trabalho
+também menciona que:
+\begin{quote}
+\textit{``A scientist does not pass on an idea after blending it with
+  with his own without checking the logic of what he is saying or his
+  reputation would be in trouble. Altough there there are some
+  exceptions, science does not improve by random errors.''}
+\end{quote}
+Com estas analogias à AM deve ser possível observar que a mutação, ao
+contrário de algoritmos genéticos (AG), não é um operador
+característico desta metaheurística.
 
+Neste método, uma população (um conjunto de soluções, ou cromossomos
+em AG, factíveis) é
+inicialmente criada. Cada indivíduo (uma solução factível) é um ótimo
+local. A cada geração (iteração) trabalha-se com recombinações,
+seguido de obtenção de ótimo local, de indivíduos da população
+atual. O operador de mutação é utilizado no caso de uma
+geração apresentar baixa diversidade, ou seja: os indivíduos estão
+mais semelhantes que um valor limite estabelecido.
+%geração apresentar baixa diversidade, ou seja: os alelos ..  genes
+%(elementos que compõem uma solução) na população estão
+%suficientemente parecidos. XXX muita notação à toa..
+Ao estabelecer um limite para o tamanho do conjunto de soluções,
+torna-se necessário o uso de uma função que seleciona os indivíduos
+mais adaptados dos demais para permanecerem na população.
 
 
 \section{Implementação}
+
+\subsection{Puramente aleatória}
+
+A obtenção de soluções de instâncias do QAP por meio de um algoritmo
+puramente aleatório é simples. Apesar desta forma de resolução não
+fazer parte na coleta de resultados, ela é útil na discussão a
+respeito da representação de soluções e custos envolvidos.
+
+\begin{codebox}
+\Procname{$\proc{qap-random}(F, D)$}
+\li $\id{melhor-sol} \gets \emptyset$
+\li $\id{melhor-custo} \gets \infty$
+\li \While critérios de parada não satisfeitos \Do \label{criterio-random}
+\li     $\id{sol} \gets \proc{solução-aleatória}()$
+\li	$\id{custo} \gets \proc{calc-custo}(F, D, \id{sol})$
+\li	\If $\id{custo} < \id{melhor-custo}$ \Then
+\li		$\id{melhor-custo} \gets \id{custo}$
+\li		$\id{melhor-sol} \gets \id{sol}$
+        \End
+    \End
+\li \Return ($\id{melhor-sol}, \id{melhor-custo}$)
+\end{codebox}
+
+A função \proc{qap-random} recebe as duas matrizes que descrevem uma
+instância QAP e retorna a melhor solução, com seu respectivo custo,
+encontrada. Se implementado, critérios de parada (linha
+\ref{criterio-random}) podem ser quantidade de iterações ou quantidade
+de iterações sem redução de custo. Uma solução é construída com uso da
+função \proc{solução-aleatória}, sendo esta também utilizada em certos
+momentos das metaheurísticas desenvolvidas aqui. Calcular o custo de
+cada solução envolve o uso da Equação \ref{calc-custo}, cuja
+complexidade computacional é $\Theta(n^2)$. Logo, para ser
+compatível com esta equação, uma solução precisa ser uma das $n!$
+permutações possíveis para uma instância com matrizes de ordem
+$n \times n$.
+
+Representar uma solução qualquer na forma de permutação, como por
+exemplo: $[1\,\, 4\,\, 2\,\, 3]$, tem o significado de atribuir a
+instalação 1 na localização 1, instalação 4 na localização 2 e assim
+por diante. De forma geral, a instalação $\pi(i)$ fica
+localizada em $i$. Esta é uma forma simples de representar soluções no
+QAP, sendo necessário cuidados para evitar o custo da Equação
+\ref{calc-custo} caso ela seja modificada em métodos de busca local,
+mas foi utilizada ao longo deste trabalho.
+
+\subsection{ACO}
+
+\subsection{AM}
 
 
 
