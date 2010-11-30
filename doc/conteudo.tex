@@ -54,6 +54,7 @@ apresentados.
 
 XXX No parágrafo anterior, falar sobre os resultados obtidos
 
+\subsection{Busca Local}
 
 \section{Fundamentação teórica}
 \label{sec:fund}
@@ -106,6 +107,8 @@ fuga de ótimos locais.
 Falar que o trabalhou utilizou ACO e AM, que são apresentados nas
 Subseções seguintes.
 
+\subsection{Busca Local}
+
 \subsection{ACO}
 
 \subsection{Algoritmos Meméticos}
@@ -132,6 +135,8 @@ também menciona que:
 Com estas analogias à AM deve ser possível observar que a mutação, ao
 contrário de algoritmos genéticos (AG), não é um operador
 característico desta metaheurística.
+% XXX Colocar em algum lugar que AM também é conhecido como genético
+% híbrido
 
 Neste método, uma população (um conjunto de soluções, ou cromossomos
 em AG, factíveis) é
@@ -282,9 +287,19 @@ valor 6 de \verb!B! para ser copiado, ocasionando também a inserção de
 mesma já foi preenchida com algum valor e não faz nada. Os demais
 passos repetem o que já foi descrito.
 
+Quando a busca local por troca de pares é aplicada a um indivíduo
+recombinado, é feito uso de informações exemplificadas na Figura
+\ref{fig:recomb-op}. Posições onde \verb!A! e \verb!B! contém o
+mesmo valor não são utilizadas nas trocas, ficando fixas. Isso reduz o
+número total de trocas nestes casos e, ao mesmo tempo, faz com que o
+indivíduo resultante siga o propósito dos algoritmos meméticos:
+se duas soluções encontraram a mesma localização para uma mesma
+instalação, então repassar essa informação é um meio de permitir focar
+na evolução de outras partes do problema.
+
 Internamente é mantido uma variável que identifica se a população foi
 modificada por meio de recombinações ou não. Caso os elementos
-produzidos com este operador não apresente nada diferente para a
+produzidos com este operador não apresentem nada diferente para a
 população, um contador é incrementado; caso contrário este mesmo
 contador é definido em 0. Isso é utilizado como um critério de
 convergência. O outro critério é calculado, em todas as gerações, da
