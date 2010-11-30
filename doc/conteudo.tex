@@ -106,7 +106,53 @@ fuga de ótimos locais.
 Falar que o trabalhou utilizou ACO e AM, que são apresentados nas
 Subseções seguintes.
 
-\subsection{ACO}
+\subsection{Otimização por Colônia de Formigas}
+
+Otimização por Colônia de Formiga foi proposto originalmente por Dorigo em
+\cite{aco-origin}. A meta-heurística ACO define uma classe de algoritmos
+de formiga. Algoritmos de formiga são sistema multi-agentes no qual o
+comportamento de cada agente ~\cite{aco-origin2}, chamado formiga artificial
+ou apenas formiga, é inspirado no comportamento real das formigas biológicas.
+A inspiração de desenvolver um algoritmo que simule o comportamento de uma
+colônia de formigas, se deu após o experimento de Goss et. al.\cite{Goss}.
+
+Em seu experimento, Goss utilizou uma colonia de formigas argentinas ({\it
+Iridomyrmex humilis}). Entre a colonia de formigas e a fonte de comida, Goss
+colocou uma ponte que se ramifica em dois caminhos, como ilustra a Figura
+~\ref{fig:ponte}, fazendo com que uma formiga tenha que escolher uma das
+ramificações. Após um momento inicial, foi observado que a maioria das
+formigas passavam a escolher o menor caminho entre a colonia de formigas
+e a fonte de comida. Esse comportamento ocorre devido a uma comunicação
+indireta entre as formigas, que funciona como um mecanismo de{\it feedback}
+positivo. Quando uma formiga caminha por um determinado caminho, ela deposita
+no chão uma substância química chamada feromônio. Quando uma formiga
+chega em um ponto de decisão, como a ramificação da ponte, ela faz uma
+decisão probabilística baseada na quantidade de feromônio encontrada
+nas ramificações. Essa decisão leva a um efeito de autocatálise pois
+ao fazer a decisão de um caminho a seguir a formiga reforça ainda mais a
+quantidade de feromônio naquele caminho o que aumenta a probabilidade desse
+caminho ser escolhido por futuras formigas.
+
+Inspirado no trabalho de Goos, Colorni desenvolveu o primeiro algoritmo
+baseado em colonia de formigas o {\it Ant System} (AS) ~\cite{as-origin}.
+No AS as formigas caminham em um grafo de componentes de soluções $C$,
+adicionando componentes de solução a uma solução passo a passo. Para
+determinar se uma componente deve ser adiciona a solução, cada formiga
+faz uma decisão aleatória, baseada na quantidade de feromônio e
+na informação heurística associada aquela componente. Para associar um
+quantidade de feromônio a uma solução é utilizada uma matriz de feromônio
+$T_{ij}$, onde cada elemento $\tau_{ij}$ representa a quantidade de feromônio
+associada componente $c_{ij}$. No final de cada iteração, todas as formigas
+atualizam essa matriz de feromônio, baseada nas suas respectivas soluções.
+
+Inspirado no AS, Hoos \cite{mmas-origin} propôs um melhoramento chamado
+$\mathcal{Min-Max}$ Ant System ($\mathcal{MMax}$). Sua principal intenção
+era evitar a estagnação precoce, o que faz com que todas as formigas sigam
+sempre o mesmo caminho e parem de explorar o espaço de busca. Como principal
+modificação para atingir esse objetivo, o $\mathcal{MMax}$ delimita um
+intervalo para o feromônio $\tau_{min} \le \tau_{ij} \le \tau_{max}$,
+e assim evita que uma componente de solução acumule muito feromônio, % xxx melhorar isso
+o que levaria as formigas a sempre escolherem ela.
 
 \subsection{Algoritmos Meméticos}
 
