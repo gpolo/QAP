@@ -195,6 +195,67 @@ mas foi utilizada ao longo deste trabalho.
 
 \subsection{AM}
 
+A forma geral do AM desenvolvido é:
+
+\begin{codebox}
+\Procname{$\proc{qap-memético}(F, D)$}
+\li $\id{pop} \gets \proc{população-inicial}(F, D)$ \label{popinit}
+\li \While critérios de parada não satisfeitos \Do \label{am-criterios}
+\li     \For $i \gets 1$ \To $\const{n-recomb}$ \Do
+\li	    $r \gets \proc{recombinar}(\proc{random-select}(pop, 2))$
+\li	    $\proc{insere-ordenado}(pop, \proc{busca-local}(F, D, r))$
+	\End
+\li	\If $\proc{convergiu(pop)}$ \Then
+\li	    $\proc{mutacionar}(pop[2:])$
+	\End
+\li     \If $\proc{estagnou}()$ \Then
+\li         $\id{pop} \gets \id{pop}[1] \cup \proc{população-inicial}(F, D)$
+        \End
+    \End
+\li \Return $(\id{pop}[1])$
+\end{codebox}
+
+A população inicial, linha \ref{popinit}, é criada de forma puramente
+aleatória, mas a
+\proc{busca-local} é utilizada em todos os indivíduos gerados. Essa
+população é mantida em ordem crescente de custo, de modo que a
+primeira ali contida ($\id{pop}[1]$) sempre contenha a melhor solução
+encontrada.
+
+Como critérios de paradas, linha \ref{am-criterios}, são aceitos:
+quantidade de gerações, tempo máximo de execução, valor atingido. Essa
+última refere-se a especificação de um valor a ser alcançado, ao
+término de uma geração é verificado se a melhor solução é menor ou
+igual a esse valor e encerra, ou não, a execução.
+
+Para realizar as recombinações, um parâmetro $\const{n-recomb}$ é
+estabelecido e indica a quantidade destas a serem feitas. A função
+$\proc{random-select}$ tem o cuidado de escolher dois indivíduos
+distintos da população para cada recombinação. Em seguida,
+$\proc{insere-ordenado}$ preocupa-se em manter a população ordenada ao
+inserir o novo indivíduo gerado a partir da recombinação seguido de busca
+local. Dois detalhes estão envolvidos nesta operação de
+inserção: \begin{inparaenum}[(1)] \item a
+variável $\id{pop}$ é tratada como um conjunto, portanto
+soluções já existentes são descartadas; \item um novo indivíduo é
+inserido na população somente se esta já não estiver em seu limite ou se o
+mesmo não for pior que o pior atual\end{inparaenum}. O operador de
+recombinação (função \proc{recombinar}) foi implementado de forma
+bastante semelhante com aquele descrito em \cite{merz_freisleben} e a
+Figura \ref{fig:recomb-op} demonstra seu funcionamento.
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.70]{recomb-op}
+  \caption{Exemplo de recombinação realizada entre dois
+    indivíduos\label{fig:recomb-op}}
+\end{figure}
+
+Oi
+
+Oi
+
+Oi
 
 
 \section{Resultados}
