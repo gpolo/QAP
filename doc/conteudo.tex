@@ -140,9 +140,32 @@ troca.
   \caption{Uma troca, entre 8 e 3, na busca local\label{fig:localstep}}
 \end{figure}
 
-Após uma troca, para identificar o novo custo da solução sem recorrer
-a Equação \ref{calc-custo}, é necessario calcular um $\Delta C$ com custo
-$O(n)$. Para o caso geral, 
+Identificar a melhor troca exige que cada uma delas considerada tenha
+seu custo calculado. Para não recorrer a Equação \ref{calc-custo} com
+custo $O(n^2)$, calcula-se um $\Delta C$ com custo $O(n)$.
+Para o caso geral, tem-se que:
+\begin{eqnarray}\label{ugh}
+\Delta(\pi, r, s) &=& f_{rr} (d_{\pi(s)\pi(s)} - d_{\pi(r)\pi(r)}) +
+f_{rs} (d_{\pi(s)\pi(r)} - d_{\pi(r)\pi(s)}) + \nonumber \\
+& & f_{sr} (d_{\pi(r)\pi(s)} - d_{\pi(s)\pi(r)}) + f_{ss} (d_{\pi(r)\pi(r)} -
+d_{\pi(s)\pi(s)}) + \\
+& & \sum_{k = 1, k \not \in \{r, s\}}^{n} (f_{kr} (d_{\pi(k)\pi(s)} -
+d_{\pi(k)\pi(r)}) + f_{ks} (d_{\pi(k)\pi(r)} - d_{\pi(k)\pi(s)}) + \nonumber \\
+& & \quad \quad \quad \quad f_{rk} (d_{\pi(s)\pi(k)} - d_{\pi(r)\pi(k)}) + f_{sk}
+(d_{\pi(r)\pi(k)} - d_{\pi(s)\pi(k)})) \nonumber
+\end{eqnarray}
+com $r$ e $s$ sendo os índices dos elementos trocados. A Equação
+\ref{ugh} pode ser simplificada para casos simétricos, tornando-se:
+\begin{equation}
+\Delta(\pi, r, s) = 2 \sum_{k = 1, k \not \in \{r, s\}}^{n} (f_{sk}
+- f_{rk}) (b_{\pi(r)\pi(k)} - b_{\pi(s) + \pi(k)})
+\end{equation}
+Além disso, para trocas subsequentes é possível reduzir para $O(1)$
+esse cálculo. O trabalho de \cite{taillard1} menciona esse caso, mas
+aqui não é feito uso do mesmo. Com isso, cada uma das $\frac{n!}{2 (n -
+  2)!}$ trocas, realizadas a cada iteração da busca local, tem custo
+$O(n)$. %${n}\choose{2}$ ia ser mais legal..
+
 
 \subsection{Otimização por Colônia de Formigas}
 
