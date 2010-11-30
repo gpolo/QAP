@@ -59,7 +59,7 @@ XXX No parágrafo anterior, falar sobre os resultados obtidos
 \label{sec:fund}
 
 O QAP é um problema de otimização classificado como
-$\mathcal{NP}$-difícil, 
+$\mathcal{NP}$-difícil,
 % XXX Seria bom indicar qual trabalho provou isso (NP-dificil)
 portanto desconhece-se um algoritmo de tempo polinomial que resolve
 este problema. Aproximações, para qualquer instância, para este
@@ -68,6 +68,10 @@ problema também foram classificadas como $\mathcal{NP}$-difícil.
 % melhor.
 
 ...
+
+Falar de como detectar instâncias díficies da QAP! Usando flow
+dominance e distance dominance!
+
 
 % XXX Só movi da introdução pra cá.
 A matriz $F$ é chamada de matriz de fluxos, onde $f_{ij}$ representa o
@@ -366,8 +370,8 @@ um limite inferior estabelecido. Melhor valor para Kra32 foi corrigido}
     Bur26b & 5426670 & 1,69 & Não & 15,91 & 274,95 \\
     Nug30 & 6124 & 0 & Sim & 52,75 & 112,48 \\
     Kra30a & 88900 & 0 & Sim & 49,23 & 149,98 \\
-    Kra32  & 88700 & 0 & Sim & 164,22 & 49,01 \\
     Esc32h & 438 & 21,00 & Sim & 187,85 & 69,27 \\
+    Kra32  & 88700 & 0 & Sim & 164,22 & 49,01 \\
     Ste36c & 8239110 & 0 & Sim & 55,90 & 400,31 \\
     Tho40 & 240516 & 10,94 & Sim & 53,20 & 155,54 \\
     Tai50b & 458821517 & 91,23 & Não & 73,44 & 313,91 \\
@@ -379,6 +383,40 @@ um limite inferior estabelecido. Melhor valor para Kra32 foi corrigido}
   \end{tabular}
 \end{table}
 
+\begin{table}[H]
+  \caption{XXX Resultados XXX}
+  \centering
+  \begin{tabular}{l r r r r r r}
+    \toprule
+    & \multicolumn{3}{c}{AM} & \multicolumn{3}{c}{ACO} \\
+    \cmidrule(r){2-4} \cmidrule(r){5-7}
+    Instância & N$_{melhor}$ & Desvio (\%) & T$_{melhor}$ (s) & N$_{melhor}$
+    & Desvio (\%) & T$_{melhor}$ (s)\\
+    \midrule
+Nug12 & 22/22 & 0.0000 & 0,00 & 22/22 & 0.0000 & 0,01 \\
+Rou15 & 22/22 & 0.0000 & 0,01 & 22/22 & 0.0000 & 0,02 \\
+Nug17 & 22/22 & 0.0000 & 0,03 & 22/22 & 0.0000 & 0,11 \\
+Chr18b & 22/22 & 0.0000 & 0,01 & 22/22 & 0.0000 & 0,03 \\
+Had20 & 22/22 & 0.0000 & 0,01 & 22/22 & 0.0000 & 0,01 \\
+Nug22 & 22/22 & 0.0000 & 0,03 & 22/22 & 0.0000 & 0,08 \\
+Chr25a & 22/22 & 0.0000 & 0,39 & 22/22 & 0.0000 & 3,07 \\
+Tai25a & 22/22 & 0.0000 & 15,15 & 1/22 & 0.4983 & 4,77 \\
+Bur26b & 22/22 & 0.0000 & 0,20 & 22/22 & 0.0000 & 0,55 \\
+Kra30a & 22/22 & 0.0000 & 0,55 & 22/22 & 0.0000 & 4,66 \\
+Nug30 & 22/22 & 0.0000 & 1,95 & 15/22 & 0.0297 & 7,45 \\
+Esc32h & 22/22 & 0.0000 & 0,04 & 22/22 & 0.0000 & 0,07 \\
+Kra32 & 22/22 & 0.0000 & 0,44 & 22/22 & 0.0000 & 6,61 \\
+Ste36c & 22/22 & 0.0000 & 2,59 & 22/22 & 0.0000 & 20,80 \\
+Tho40 & 15/22 & 0.0034 & 64,44 & 0/22 & 0.0463 & -- \\
+Tai50b & 22/22 & 0.0000 & 45,85 & 15/22 & 0.0895 & 83,98 \\
+Wil50 & 13/22 & 0.0067 & 62,40 & 1/22 & 0.0518 & 128,32 \\
+Tai60a & 0/22 & 1.2836 & -- & 0/22 & 2.5967 & -- \\
+Tai60b & 22/22 & 0.0000 & 70,77 & 0/22 & 0.0283 & -- \\
+Esc64a & 22/22 & 0.0000 & 0,26 & 22/22 & 0.0000 & 0,03 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
 ...
-Cada instância foi executada 22 vezes.
+Cada instância foi executada 22 vezes com tempo limite de 3 minutos.
 ..
