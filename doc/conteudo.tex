@@ -54,41 +54,47 @@ apresentados.
 
 XXX No parágrafo anterior, falar sobre os resultados obtidos
 
-\subsection{Busca Local}
 
 \section{Fundamentação teórica}
 \label{sec:fund}
 
 O QAP é um problema de otimização classificado como
-$\mathcal{NP}$-difícil,
-% XXX Seria bom indicar qual trabalho provou isso (NP-dificil)
+$\mathcal{NP}$--difícil,
 portanto desconhece-se um algoritmo de tempo polinomial que resolve
-este problema. Aproximações, para qualquer instância, para este
-problema também foram classificadas como $\mathcal{NP}$-difícil.
-% XXX Essa última frase provavelmente precisa de uma explicação
-% melhor.
+este problema. Aproximações ($\epsilon-approximation$), para qualquer
+instância, para este problema também foram classificadas como
+$\mathcal{NP}$--difícil \cite{sahni-gonzales}.
+% XXX Também tem um trabalho que trata de busca local com custo
+% exponencial em QAP.
 
-...
+Há pelo menos duas formas de definir a função objetivo deste problema.
+A Equação \ref{calc-custo} apresenta uma primeira forma,
+mas também é comum encontrar a seguinte formulação:
+\begin{equation}\label{calc-custo2}
+C(\pi) = \sum_{i = 1}^{n} \sum_{j = 1}^{n} f_{ij} d_{\pi(i)
+   \pi(j)} + \sum_{i = 1}^{n} a_{\pi(i) i} \, , \quad \pi \in \prod(n)
+\end{equation}
+onde a matriz A apresenta valores $a_{ij}$ que indicam o custo de
+colocar a instalação $i$ na localização $j$. A Equação
+\ref{calc-custo2} descreve o problema denominado de QAP generalizado
+de Koopmans--Beckmann. % XXX Citar talvez
+Nos dois casos, a matriz $F$ é chamada de matriz de fluxos, onde
+$f_{ij}$ representa o
+fluxo de material da instalação $i$ para a $j$. A matriz $D$ é chamada
+de matriz de distâncias, com $d_{kl}$ representando a distância da
+localização $k$ a $l$.% Alguns autores trazem também uma matriz $C$,
+%que realiza associação de custos, mas costuma ser ignorada por não
+%trazer contribuição significante para a complexidade do  problema
+%\cite{QACO}.
+
+% XXX Ficou na parte de implementação puramente aleatória, talvez
+% trazer pra cá.
+%Falar de como uma solução é representada neste trabalho.
+
 
 Falar de como detectar instâncias díficies da QAP! Usando flow
 dominance e distance dominance!
 
-
-% XXX Só movi da introdução pra cá.
-A matriz $F$ é chamada de matriz de fluxos, onde $f_{ij}$ representa o
-fluxo de material da instalação $i$ para a $j$. A matriz $D$ é chamada
-de matriz de distâncias, com $d_{kl}$ representando a distância da
-localização $k$ a $l$. Alguns autores trazem também uma matriz $C$,
-que realiza associação de custos, mas costuma ser ignorada por não
-trazer contribuição significante para a complexidade do  problema
-\cite{QACO}.
-
-XXX
-
-Detalhar um pouco mais o QAP.
-
-Falar de como o problema pode ser representado e também como uma
-solução é representada neste trabalho.
 
 Falar do custo de utilizar métodos para solução exata e
 por isso formas alternativas tem sido utilizadas.
@@ -107,7 +113,35 @@ fuga de ótimos locais.
 Falar que o trabalhou utilizou ACO e AM, que são apresentados nas
 Subseções seguintes.
 
-\subsection{Busca Local}
+\subsection{Heurística Melhorativa}
+% XXX Começo é praticamente o que tinha no meu outro trabalho
+
+Partindo de uma solução factível, é possível reduzir seu custo por
+meio de uma heurística melhorativa. Um ótimo local pode ser obtido com
+esse tipo de heurística. O ótimo global pode coincidir com o custo do
+caminho final encontrado, mas esse método não fornece meios de se
+asserir esta informação.
+
+De acordo com \cite{gutin-punnen}, o método utilizado neste trabalho é
+classificado como ``método de transição de vizinhança'' pois são
+procedimentos de busca local que movem de uma solução a outra baseados
+na estrutura da vizinhança. Em geral, diversas iterações ocorrem até
+que se chegue ao ótimo local.
+
+Para a busca local com troca de pares (\textit{pairwise interchange}),
+cada iteração encontra e realiza, se houver, a melhor troca de duas
+instalações quaisquer (Figura \ref{fig:localstep}).
+O procedimento é encerrado quando não for possível realizar nenhuma
+troca.
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.65]{pairchange}
+  \caption{Uma troca, entre 8 e 3, na busca local\label{fig:localstep}}
+\end{figure}
+
+Após uma troca, para identificar o novo custo da solução sem recorrer
+a Equação \ref{calc-custo}, ... XXX
 
 \subsection{Otimização por Colônia de Formigas}
 
@@ -243,8 +277,8 @@ instalação 1 na localização 1, instalação 4 na localização 2 e assim
 por diante. De forma geral, a instalação $\pi(i)$ fica
 localizada em $i$. Esta é uma forma simples de representar soluções no
 QAP, sendo necessário cuidados para evitar o custo da Equação
-\ref{calc-custo} caso ela seja modificada em métodos de busca local,
-mas foi utilizada ao longo deste trabalho.
+\ref{calc-custo} caso a solução seja modificada em métodos de busca
+local, mas foi utilizada ao longo deste trabalho.
 
 \subsection{ACO}
 
@@ -303,7 +337,7 @@ funcionamento.
 
 \begin{figure}
   \centering
-  \includegraphics[scale=0.70]{recomb-op}
+  \includegraphics[scale=0.67]{recomb-op}
   \caption{Exemplo de recombinação realizada entre dois
     indivíduos\label{fig:recomb-op}}
 \end{figure}
