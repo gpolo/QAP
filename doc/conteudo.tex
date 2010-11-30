@@ -84,34 +84,49 @@ fluxo de material da instalação $i$ para a $j$. A matriz $D$ é chamada
 de matriz de distâncias, com $d_{kl}$ representando a distância da
 localização $k$ a $l$.% Alguns autores trazem também uma matriz $C$,
 %que realiza associação de custos, mas costuma ser ignorada por não
-%trazer contribuição significante para a complexidade do  problema
+%trazer contribuição significante para a complexidade do problema
 %\cite{QACO}.
 
 % XXX Ficou na parte de implementação puramente aleatória, talvez
 % trazer pra cá.
-%Falar de como uma solução é representada neste trabalho.
+%-> Falar de como uma solução é representada neste trabalho.
 
+Apesar deste problema ser frequentemente mencionado na literatura como
+um dos mais difícieis de obter a solução exata, o trabalho de
+\cite{dominance} definiu o conceito de predomínio de fluxo
+(\textit{flow dominance}) que, juntamente com o predomínio de
+distância, consegue medir a complexidade de uma instância do QAP. O
+predomínio de uma matriz M, $dom(M)$, é calculado da seguinte maneira:
+\begin{eqnarray}
+dom(M) &=& 100 \frac{\sigma(M)}{\mu(M)} \\
+\mu(M) &=& \frac{1}{n^2} \sum_{i=1}^n \sum_{j=1}^n m_{ij} \nonumber \\
+\sigma(M) &=& \sqrt{\frac{1}{n^2 - 1} \sum_{i=1}^n \sum_{j=1}^n
+(m_{ij} - \mu(M))^2} \nonumber
+\end{eqnarray}
+Obtendo-se $dom(A)$ e $dom(B)$ é possível conhecer a dificuldade de
+resolução da instância. De acordo com o trabalho de \cite{taillard1},
+os casos mais simples de resolução são aqueles do mundo real. Nesse
+tipo de problema, observa-se a característica de que $dom(A)$ ou
+$dom(B)$ é alto (acima de 100\%). Em problemas gerados de forma
+aleatória tem-se que a dominância é baixa, em torno de 60\% para
+instâncias estudadas em \cite{taillard1}, e atingir a solução exata
+torna-se mais difícil.
 
-Falar de como detectar instâncias díficies da QAP! Usando flow
-dominance e distance dominance!
+De forma geral, algoritmos que trabalham com resolução tem alto custo
+computacional. Por esse motivo, métodos heurísticos foram as formas
+escolhidas para abordar este problema. Neste trabalho foi feito uso de
+duas metaheurísticas: ACO e AM, descritas em subseções seguintes.
+Nos dois casos é feito uso de uma heurística melhorativa, que é
+descrita primeiramente.
 
-
-Falar do custo de utilizar métodos para solução exata e
-por isso formas alternativas tem sido utilizadas.
-Falar que utilizou metaheurísticas e juntar com o parágrafo seguinte
-
-% XXX Peguei do meu outro trabalho esse primeiro parágrafo.
-% Mudar, complementar, etc.
-De acordo com \cite{metatheory}, metaheurísticas são uma
-classe de métodos aproximativos projetados para atacar problemas
-difíceis de otimização combinatória que não obtiveram sucesso por meio
-de heurísticas clássicas. Pode-se dizer que metaheurísticas são
-heurísticas que guiam heurísticas, de modo que sejam combinados
-conceitos diversos para exploração do espaço de busca permitindo a
-fuga de ótimos locais.
-
-Falar que o trabalhou utilizou ACO e AM, que são apresentados nas
-Subseções seguintes.
+% XXX Peguei do meu outro trabalho esse parágrafo.
+% De acordo com \cite{metatheory}, metaheurísticas são uma
+% classe de métodos aproximativos projetados para atacar problemas
+% difíceis de otimização combinatória que não obtiveram sucesso por meio
+% de heurísticas clássicas. Pode-se dizer que metaheurísticas são
+% heurísticas que guiam heurísticas, de modo que sejam combinados
+% conceitos diversos para exploração do espaço de busca permitindo a
+% fuga de ótimos locais.
 
 \subsection{Heurística Melhorativa}
 % XXX Começo é praticamente o que tinha no meu outro trabalho
@@ -212,7 +227,8 @@ era evitar a estagnação precoce, o que faz com que todas as formigas sigam
 sempre o mesmo caminho e parem de explorar o espaço de busca. Como principal
 modificação para atingir esse objetivo, o $\mathcal{MMax}$ delimita um
 intervalo para o feromônio $\tau_{min} \le \tau_{ij} \le \tau_{max}$,
-e assim evita que uma componente de solução acumule muito feromônio, % xxx melhorar isso
+e assim evita que uma componente de solução acumule muito feromônio,
+% xxx melhorar isso 
 o que levaria as formigas a sempre escolherem ela.
 
 \subsection{Algoritmos Meméticos}
@@ -530,7 +546,7 @@ um limite inferior estabelecido. Melhor valor para Kra32 foi corrigido}
     Tai50b & 22/22 & 0,0000 & 45,85 & 11/22 & 0,1221 & 81,93 \\
     Wil50 & 13/22 & 0,0067 & 62,40 & 4/22 & 0,0417 & 129,72 \\
     Tai60a & 0/22 & 1,2836 & -- & 0/22 & 2,5952 & -- \\
-    Tai60b & 22/22 & 0,0000 & 70,77 & 0/22 & 0,0283 & -- \\
+    Tai60b & 22/22 & 0,0000 & 70,77 & 1/22 & 0,0262 & 132,19 \\
     Esc64a & 22/22 & 0,0000 & 0,26 & 22/22 & 0,0000 & 0,54 \\
     \bottomrule
   \end{tabular}
