@@ -40,7 +40,7 @@ para o QAP de modo a rapidamente produzir resultados aceitáveis.
 
 Neste trabalho, a abordagem ao problema ocorre com uso de duas
 metaheurísticas: \begin{inparaenum}[(1)] \item Otimização por Colônia
-  de Formigas, ou {\it Ant Colony Optimization} (ACO) \cite{ACO}, que é
+  de Formigas, ou {\it Ant Colony Optimization} (ACO) \cite{aco-origin}, que é
 uma heurística inspirada no comportamento das formigas;
 \item Algoritmo Memético (AM), ou \textit{Memetic Algorithm}\cite{moscato1},
 que opera baseado em uma população e tenta imitar a evolução
@@ -220,11 +220,11 @@ $T_{ij}$, onde cada elemento $\tau_{ij}$ representa a quantidade de feromônio
 associada componente $c_{ij}$. No final de cada iteração, todas as formigas
 atualizam essa matriz de feromônio, baseada nas suas respectivas soluções.
 
-Inspirado no AS, Hoos \cite{mmas-origin} propôs um melhoramento chamado
-$\mathcal{Min-Max}$ Ant System ($\mathcal{MMax}$). Sua principal intenção
+Inspirado no AS, Hoos \cite{mmax-origin} propôs um melhoramento chamado
+$\mathcal{Min-Max}$ Ant System ($\mathcal{MMAS}$). Sua principal intenção
 era evitar a estagnação precoce, o que faz com que todas as formigas sigam
 sempre o mesmo caminho e parem de explorar o espaço de busca. Como principal
-modificação para atingir esse objetivo, o $\mathcal{MMax}$ delimita um
+modificação para atingir esse objetivo, o $\mathcal{MMAS}$ delimita um
 intervalo para o feromônio $\tau_{min} \le \tau_{ij} \le \tau_{max}$,
 e assim evita que uma componente de solução acumule muito feromônio, % xxx melhorar isso 
 o que levaria as formigas a sempre escolherem ela.
@@ -322,7 +322,178 @@ QAP, sendo necessário cuidados para evitar o custo da Equação
 \ref{calc-custo} caso a solução seja modificada em métodos de busca
 local, mas foi utilizada ao longo deste trabalho.
 
-\subsection{ACO}
+\subsection{Otimização por Colônia de Formigas}
+
+Neste trabalho, o algoritmo de formigas utilizado é o $\mathcal{MMAS}$
+\cite{mmax-origin}. Abaixo é mostrado a forma geral utilizada nesse trabalho.
+
+\begin{codebox}
+\Procname{$\proc{QAP-MMAS}(P)$}
+\li    $\id{S} \gets \infty$
+\li    $\id{C} \gets \proc{inicializa-colonia(P)}$ \label{ant-init}
+\li    \While critério de parada não satisfeitos \label{ant-criterio}\Do 
+\li         $\id{s} \gets \proc{construa-soluções(C,P)}$ \label{ant-contrui}
+\li         $\id{s'} \gets \proc{aplique-busca-local(P,\id{s})}$ \label{ant-blocal}
+\li         \If $\id{S} > \proc{melhor-solução(s')}$ \Then
+\li             $\id{S} \gets \proc{melhor-solução(s')}$
+            \End
+\li         $\id{C} \gets \proc{atualiza-feromônio(C, melhor-solucao(s'))}$ \label{ant-update}
+       \End
+\li    \Return $\id{S}$
+\end{codebox}
+
+% inicialização
+    % cria n formigas
+    % inicializ a matriz de feromonio para infinito
+O Algoritmo \proc{QAP-MMAS} recebe como parâmetro \id{P}, que é uma
+instância do problema QAP. Na Linha \ref{ant-init}, é realizada a criação
+de uma nova colônia de formigas. \proc{inicializa-colonia(P)} cria $n$
+formigas e inicializa a matriz de feromônio. Todas as instâncias da
+QAPLIB utilizadas nesse trabalho, foram rodadas utilizando-se $50$ formigas
+e definindo o valor inicial da tabela de feromônio para $\infty$, para
+que após a primeira iteração todas as entradas da tabela de feromônio
+$\tau_{ij}$ tenham o valor de $\tau_{max}$, como sugere \cite{mmas-qap}.
+
+% criterio-de parada
+    % + tempo
+    % + melhor solução conhecida
+
+Como critério de parada, Linha \ref{ant-criterio}, são aceitos: número de
+iterações, tempo máximo de execução e valor atingido. Quando o critério
+de valor atingido é utilizado, um valor é passado para o $MMAS$
+e ele irá parar a busca assim que encontrar um valor menor ou igual a esse
+parâmetro. Nas instâncias abordadas por esse trabalho, foram utilizados
+como critério de parada: o tempo e o valor atingido, de forma combinada; desta
+forma o algoritmo encerava a busca quando encontrar um valor determinado,
+que era o valor da melhor solução conhecida ou quando atingia o tempo
+limite de 3 minutos.
+
+A função \proc{construa-soluções(C,P)}, da Linha \ref{ant-contrui}, constrói
+uma solução para cada formiga no sistema. Abaixo é mostrado a Função
+\proc{formiga-construir-solução(P, C)} que é responsável por construir uma
+solução para cada formiga.
+
+
+\begin{codebox}
+\Procname{$\proc{formiga-construir-solução(P, C)}$}
+\li     $\id{L} \gets \proc{locais(P)}$
+\li     $\id{I} \gets \proc{instalações(P)}$
+\li     $\id{s} \gets \const{nil}$
+\li     \For $\id{i} \gets 1$ \To $n$ \Do
+\li         $\id{l} \gets \proc{lugar-randômico(L)}$ \label{l-random}
+\li         $\id{L} \gets \id{L} \setminus \{l\}$
+\li         $\id{i} \gets \proc{próxima-instalação(C,\id{l})}$
+\li         $\id{I} \gets \id{I} \setminus \{\id{i}\}$
+\li         $\id{s} \gets \proc{adiciona-componente(\id{l},\id{i})}$
+        \End
+\li     \Return \id{s}
+\end{codebox}
+
+% constroi solução
+    % randomicamente
+    % formula de probabilidade
+A Função \proc{lugar-randômico} da Linha ~\ref{l-random}, escolhe
+aleatoriamente um local que ainda não possui nenhuma instalação associada.
+A Função \proc{próxima-instalação} escolhe aleatoriamente uma instalação
+para um local \id{l} baseada na quantidade de feromônio. A probabilidade de
+uma instalação $j$ ser associada a um local $i$ é dada pela seguinte
+formula:
+
+\[
+    p_{ij} = \left\{
+    \begin{array}{l l}
+    \frac{\tau_{ij}}{\sum_{k \in \text{instalações livres}} \tau_{ik}} &
+        \text{se a instalação $j$ ainda não foi associada a algum local}\\
+    0 & \text{caso contrário}\\
+    \end{array} \right.
+\]
+
+% busca local
+    % 2-opt
+
+A Linha \ref{ant-blocal} de \proc{QAP-MMAS}, aplica a busca local {\it
+2OPT} a solução de todas as formigas.
+
+% update
+    % formula
+    % iteration best - best so far
+    % parametros min max
+    % evaporation rate
+
+A Linha \ref{ant-update} de \proc{QAP-MMAS}, faz a atualização da matriz de
+feromônio. A atualização de $\tau_{ij}$ da tabela de feromônio é dada pela
+seguinte formula:
+
+\begin{equation}
+\label{e:feromonio}
+    \tau_{ij} \gets \rho * \tau_{ij} + \Delta \tau_{ij}^{melhor}
+\end{equation}
+
+Onde $\Delta \tau_{ij}^{melhor}$ é um valor definido por
+
+\[
+\Delta \tau_{ij}^{melhor} = \left\{
+    \begin{array}{l l}
+        \frac{1}{L_{melhor}} & \text{se a melhor formiga associou a instalação $j$ ao local $i$}\\
+        0 & \text{caso contrário}\\
+    \end{array}\right.
+\]
+
+$L_{melhor}$ é o custo da solução da melhor formiga. $L_{melhor}$ pode ser:
+a melhor solução encontrada por uma formiga na iteração, $L_{melhor}^{mi}$
+ou a melhor solução encontrada desde o inicio da busca, $L_{melhor}^{mb}$.
+Utilizar $L_{melhor}^{mb}$ leva a uma conversão mais rápida, e pode fazer
+com que a matriz convirja muito rápido, podendo levar a soluções não
+muito boas.  Utilizar $L_{melhor}^{mi}$ leva a uma conversão mais lenta,
+porém geralmente leva a melhores resultados \cite{aco-origin} e por esse
+motivo essa foi a escolha para este trabalho.
+
+A Equação \ref{e:feromonio} possui a variável $\rho$, que representa a
+persistência do feromônio. Esta variável define quanto deve sobrar da
+quantidade de feromônio inicial depois da evaporação. Neste trabalho foi
+utilizado $\rho = 0.95$ para as instâncias de teste, de forma que a
+evaporação seja lenta e que o sistema convirja de vagar, fazendo que a
+exploração vá diminuindo gradativamente.
+
+A função \proc{atualiza-feromônio} toma o cuidado de manter o intervalo do
+feromônio após a evaporação/reforço dele, impondo os limites:
+
+\begin{equation}
+\tau_{ij} = \left\{
+    \begin{array}{l l}
+        \tau_{min} & \text{Se } \tau_{ij} \leq \tau_{min}\\
+        \tau_{ij} & \text{Se } \tau_{min} \leq \tau{ij} \le \tau{max}\\
+        \tau_{max} & \text{Se } \tau_{ij} > \tau{max}
+    \end{array} \right.
+\end{equation}
+
+O método utilizado para definir $\tau_{min}$ e $\tau_{max}$ foi a forma
+sugerida por \cite{mmax-origin}. \cite{mmax-origin} usa as seguintes equações
+para definir $\tau_{min}$ e $\tau_{max}$.
+
+\begin{equation}
+       \tau_{max} = \frac{1}{1-\rho}* \frac{1}{f(S^{mb})}
+\end{equation}
+
+Onde $f(S^{mb})=\frac{1}{L_{melhor}^{mb}}$. Note que $S^{mb}$ pode mudar no
+decorrer das iterações, pois $L_{melhor}^{mb}$ pode variar no decorrer
+delas, consequentemente $\tau_{max}$ pode variar no decorrer das
+iterações.
+
+\begin{equation}
+\label{e:romin}
+       \tau_{min} =
+       \frac{\rho_{max}*(1-\sqrt[n]{p_{best}})}{(\frac{n}{2}-1)*\sqrt[n]{p_{best}}}
+\end{equation}
+
+A Equação \ref{e:romin} exibe como o $\tau_{min}$ é calculado. O parâmetro
+$p_{best}$ é uma constante que representa uma probabilidade grosseira de
+se achar a solução ótima, $S^*$. Comparando os resultados obtidos em
+\cite{mmax-origin} o valor escolhido para $p_{best}$ foi $0.05$. A Equação
+\ref{e:romin} também apresenta uma variável $n$ que representa o número de
+locais ou instalações, já que necessáriamente os dois devem ser iguais para
+o QAP.
+
 
 \subsection{AM}
 
