@@ -336,41 +336,49 @@ melhor indivíduo para fazer parte deste novo conjunto de soluções.
 
 \section{Resultados}
 
-XXX
-
-Para avaliar a implementação, 20 instâncias, exibidas na Tabela
-\ref{qapinst}, da QAPLIB \cite{qaplib} foram selecionadas. A coluna
-\textit{gap} descreve a distância entre a melhor solução encontrada e
-um limite inferior estabelecido. XXX
-
+Para avaliar as implementações, 20 instâncias, exibidas na Tabela
+\ref{qapinst}, da QAPLIB \cite{qaplib} foram selecionadas. Todos os
+testes foram executados num computador com sistema operacional Mac OS
+X 10.6.5; processador Intel Core 2 Duo, modelo P8700; memória
+principal de 4 GB de 1066 Mhz, PC3-8500 DDR3 SO-DIMM SDRAM. Todo o
+código foi feito na linguagem \texttt{C}, a compilação ocorreu com uso
+do gcc 4.2.1 e unicamente da opção \verb!-O2!. O código completo pode
+ser obtido em \url{http://github.com/gpolo/QAP}.
 
 \begin{table}[H]
-  \caption{Instâncias da QAPLIB utilizadas\label{qapinst}}
+  \caption{Instâncias da QAPLIB utilizadas\label{qapinst},
+ a coluna
+\textit{Gap} descreve a distância entre a melhor solução encontrada e
+um limite inferior estabelecido. Melhor valor para Kra32 foi corrigido}
   \centering
-  \begin{tabular}{l r r}
+  \begin{tabular}{l r r c r r}
     \toprule
-    Instância & Melhor solução & \textit{Gap} (\%) \\
+    Instância & Melhor solução & \textit{Gap} (\%) & Simétrica & fd & dd\\
     \midrule
-    Nug12 & 578 & 0 \\
-    Rou15 & 354210 & 0 \\
-    Nug17 & 1732 & 0 \\
-    Chr18b & 1534 & 0 \\
-    Had20 & 6922 & 0 \\
-    Nug22 & 3596 & 0 \\
-    Chr25a & 3796 & 0 \\
-    Tai25a & 1167256 & 12,94 \\
-    Bur26b & 5426670 & 1,69 \\
-    Nug30 & 6124 & 0 \\
-    Kra30a & 88900 & 0 \\
-    Kra32  & 88700 & 0 \\
-    Esc32h & 438 & 21,00 \\
-    Ste36c & & \\
-    Tho40 & & \\
-    Tai50b & 458821517 & 91,23 \\
-    Wil50 & 48816 & 3,52 \\
-    Tai60a & & \\
-    Tai60b & & \\
-    Esc64a & 116 & 59,49 \\
+    Nug12 & 578 & 0 & Sim & 57,09 & 116,99\\
+    Rou15 & 354210 & 0 & Sim & 68,89 & 69,23 \\
+    Nug17 & 1732 & 0 & Sim & 56,36 & 105,01 \\
+    Chr18b & 1534 & 0 & Sim & 356,87 & 56,95 \\
+    Had20 & 6922 & 0 & Sim & 64,32 & 46,01 \\
+    Nug22 & 3596 & 0 & Sim & 64,15 & 114,33\\
+    Chr25a & 3796 & 0 & Sim & 424,27 & 57,97 \\
+    Tai25a & 1167256 & 12,94 & Sim & 61,81 & 64,30\\
+    Bur26b & 5426670 & 1,69 & Não & 15,91 & 274,95 \\
+    Nug30 & 6124 & 0 & Sim & 52,75 & 112,48 \\
+    Kra30a & 88900 & 0 & Sim & 49,23 & 149,98 \\
+    Kra32  & 88700 & 0 & Sim & 164,22 & 49,01 \\
+    Esc32h & 438 & 21,00 & Sim & 187,85 & 69,27 \\
+    Ste36c & 8239110 & 0 & Sim & 55,90 & 400,31 \\
+    Tho40 & 240516 & 10,94 & Sim & 53,20 & 155,54 \\
+    Tai50b & 458821517 & 91,23 & Não & 73,44 & 313,91 \\
+    Wil50 & 48816 & 3,52 & Sim & 54,20 & 66,66 \\
+    Tai60a & 7208572 & 22,94 & Sim & 61,41 & 60,86 \\
+    Tai60b & 1167256 & 91,77 & Não & 76,83 & 317,82 \\
+    Esc64a & 116 & 59,49 & Sim & 571,57 & 59,16 \\
     \bottomrule
   \end{tabular}
 \end{table}
+
+...
+Cada instância foi executada 22 vezes.
+..
