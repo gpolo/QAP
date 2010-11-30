@@ -130,7 +130,7 @@ que se chegue ao ótimo local.
 
 Para a busca local com troca de pares (\textit{pairwise interchange}),
 cada iteração encontra e realiza, se houver, a melhor troca de duas
-instalações quaisquer (Figura \ref{fig:localstep}).
+instalações quaisquer (ver Figura \ref{fig:localstep}).
 O procedimento é encerrado quando não for possível realizar nenhuma
 troca.
 
@@ -141,7 +141,8 @@ troca.
 \end{figure}
 
 Após uma troca, para identificar o novo custo da solução sem recorrer
-a Equação \ref{calc-custo}, ... XXX
+a Equação \ref{calc-custo}, é necessario calcular um $\Delta C$ com custo
+$O(n)$. Para o caso geral, 
 
 \subsection{Otimização por Colônia de Formigas}
 
@@ -222,7 +223,7 @@ Neste método, uma população (um conjunto de soluções, ou cromossomos
 em AG, factíveis) é
 inicialmente criada. Cada indivíduo (uma solução factível) é um ótimo
 local. A cada geração (iteração) trabalha-se com recombinações,
-seguido de obtenção de ótimo local, de indivíduos da população
+seguida de obtenção de ótimo local, de indivíduos da população
 atual. O operador de mutação é utilizado no caso de uma
 geração apresentar baixa diversidade, ou seja: os indivíduos estão
 mais semelhantes que um valor limite estabelecido.
@@ -323,7 +324,7 @@ estabelecido e indica a quantidade destas a serem feitas. A função
 $\proc{random-select}$ tem o cuidado de escolher dois indivíduos
 distintos da população para cada recombinação. Em seguida,
 $\proc{insere-ordenado}$ preocupa-se em manter a população ordenada ao
-inserir o novo indivíduo gerado a partir da recombinação seguido de busca
+inserir o novo indivíduo gerado a partir da recombinação seguida de busca
 local. Dois detalhes estão envolvidos nesta operação de
 inserção: \begin{inparaenum}[(1)] \item a
 variável $\id{pop}$ é tratada como um conjunto, portanto
@@ -425,7 +426,7 @@ ou mais indivíduos apresentarem a mesma solução.
 Agora resta apenas definir o que foi implementado para
 $\proc{estagnou}$. Como uma alternativa mais brusca a mutação, essa
 função foi desenvolvida. Os possíveis resultados desta função
-encontra-se no domínio booleano, sendo seu resultado verdadeiro ou
+encontram-se no domínio booleano, sendo seu resultado verdadeiro ou
 falso de acordo com um outro contador interno. Foi determinado que
 caso 500 gerações consecutivas não causem a determinação de uma
 solução melhor, então a população estagnou. Quando isso ocorre,
@@ -488,26 +489,26 @@ um limite inferior estabelecido. Melhor valor para Kra32 foi corrigido}
     Instância & N$_{melhor}$ & Desvio (\%) & T$_{melhor}$ (s) & N$_{melhor}$
     & Desvio (\%) & T$_{melhor}$ (s)\\
     \midrule
-Nug12 & 22/22 & 0.0000 & 0,00 & 22/22 & 0.0000 & 0,01 \\
-Rou15 & 22/22 & 0.0000 & 0,01 & 22/22 & 0.0000 & 0,02 \\
-Nug17 & 22/22 & 0.0000 & 0,03 & 22/22 & 0.0000 & 0,11 \\
-Chr18b & 22/22 & 0.0000 & 0,01 & 22/22 & 0.0000 & 0,03 \\
-Had20 & 22/22 & 0.0000 & 0,01 & 22/22 & 0.0000 & 0,01 \\
-Nug22 & 22/22 & 0.0000 & 0,03 & 22/22 & 0.0000 & 0,08 \\
-Chr25a & 22/22 & 0.0000 & 0,39 & 22/22 & 0.0000 & 3,07 \\
-Tai25a & 22/22 & 0.0000 & 15,15 & 1/22 & 0.4983 & 4,77 \\
-Bur26b & 22/22 & 0.0000 & 0,20 & 22/22 & 0.0000 & 0,55 \\
-Kra30a & 22/22 & 0.0000 & 0,55 & 22/22 & 0.0000 & 4,66 \\
-Nug30 & 22/22 & 0.0000 & 1,95 & 15/22 & 0.0297 & 7,45 \\
-Esc32h & 22/22 & 0.0000 & 0,04 & 22/22 & 0.0000 & 0,07 \\
-Kra32 & 22/22 & 0.0000 & 0,44 & 22/22 & 0.0000 & 6,61 \\
-Ste36c & 22/22 & 0.0000 & 2,59 & 22/22 & 0.0000 & 20,80 \\
-Tho40 & 15/22 & 0.0034 & 64,44 & 0/22 & 0.0463 & -- \\
-Tai50b & 22/22 & 0.0000 & 45,85 & 15/22 & 0.0895 & 83,98 \\
-Wil50 & 13/22 & 0.0067 & 62,40 & 1/22 & 0.0518 & 128,32 \\
-Tai60a & 0/22 & 1.2836 & -- & 0/22 & 2.5967 & -- \\
-Tai60b & 22/22 & 0.0000 & 70,77 & 0/22 & 0.0283 & -- \\
-Esc64a & 22/22 & 0.0000 & 0,26 & 22/22 & 0.0000 & 0,03 \\
+    Nug12 & 22/22 & 0,0000 & 0,00 & 22/22 & 0,0000 & 0,01 \\
+    Rou15 & 22/22 & 0,0000 & 0,01 & 22/22 & 0,0000 & 0,02 \\
+    Nug17 & 22/22 & 0,0000 & 0,03 & 22/22 & 0,0000 & 0,09 \\
+    Chr18b & 22/22 & 0,0000 & 0,01 & 22/22 & 0,0000 & 0,04 \\
+    Had20 & 22/22 & 0,0000 & 0,01 & 22/22 & 0,0000 & 0,03 \\
+    Nug22 & 22/22 & 0,0000 & 0,03 & 22/22 & 0,0000 & 0,10 \\
+    Chr25a & 22/22 & 0,0000 & 0,39 & 21/22 & 0,1054 & 3,30 \\
+    Tai25a & 22/22 & 0,0000 & 15,15 & 0/22 & 0,5780 & -- \\
+    Bur26b & 22/22 & 0,0000 & 0,20 & 22/22 & 0,0000 & 0,53 \\
+    Kra30a & 22/22 & 0,0000 & 0,55 & 22/22 & 0,0000 & 5,53 \\
+    Nug30 & 22/22 & 0,0000 & 1,95 & 11/22 & 0,0327 & 9,56 \\
+    Esc32h & 22/22 & 0,0000 & 0,04 & 22/22 & 0,0000 & 0,08 \\
+    Kra32 & 22/22 & 0,0000 & 0,44 & 22/22 & 0,0000 & 6,56 \\
+    Ste36c & 22/22 & 0,0000 & 2,59 & 22/22 & 0,0000 & 21,51 \\
+    Tho40 & 15/22 & 0,0034 & 64,44 & 0/22 & 0,0452 & -- \\
+    Tai50b & 22/22 & 0,0000 & 45,85 & 11/22 & 0,1221 & 81,93 \\
+    Wil50 & 13/22 & 0,0067 & 62,40 & 4/22 & 0,0417 & 129,72 \\
+    Tai60a & 0/22 & 1,2836 & -- & 0/22 & 2,5952 & -- \\
+    Tai60b & 22/22 & 0,0000 & 70,77 & 0/22 & 0,0283 & -- \\
+    Esc64a & 22/22 & 0,0000 & 0,26 & 22/22 & 0,0000 & 0,54 \\
     \bottomrule
   \end{tabular}
 \end{table}
