@@ -185,7 +185,7 @@ $O(n)$. %${n}\choose{2}$ ia ser mais legal..
 \subsection{Otimização por Colônia de Formigas}
 
 Otimização por Colônia de Formiga foi proposto originalmente por Dorigo em
-\cite{aco-origin}. A meta-heurística ACO define uma classe de algoritmos
+\\ \cite{aco-origin}. A meta-heurística ACO define uma classe de algoritmos
 de formiga. Algoritmos de formiga são sistema multi-agentes no qual o
 comportamento de cada agente ~\cite{aco-origin2}, chamado formiga artificial
 ou apenas formiga, é inspirado no comportamento real das formigas biológicas.
@@ -229,7 +229,7 @@ associada componente $c_{ij}$. No final de cada iteração, todas as formigas
 atualizam essa matriz de feromônio, baseada nas suas respectivas soluções.
 
 Inspirado no AS, Hoos \cite{mmax-origin} propôs um melhoramento chamado
-$\mathcal{Max-Min}$ Ant System ($\mathcal{MMAS}$). Sua principal intenção
+$\mathcal{MAX-MIN}$ Ant System ($\mathcal{MMAS}$). Sua principal intenção
 era evitar a estagnação precoce, o que faz com que todas as formigas sigam
 sempre o mesmo caminho e parem de explorar o espaço de busca. Como principal
 modificação para atingir esse objetivo, o $\mathcal{MMAS}$ delimita um
@@ -476,7 +476,7 @@ feromônio após a evaporação/reforço dele, impondo os limites:
 \end{equation}
 
 O método utilizado para definir $\tau_{min}$ e $\tau_{max}$ foi a forma
-sugerida por \cite{mmax-origin}. \cite{mmax-origin} usa as seguintes equações
+sugerida por \\ \cite{mmax-origin}. \cite{mmax-origin} usa as seguintes equações
 para definir $\tau_{min}$ e $\tau_{max}$.
 
 \begin{equation}
@@ -656,13 +656,33 @@ melhor indivíduo para fazer parte deste novo conjunto de soluções.
 \section{Resultados}
 
 Para avaliar as implementações, 20 instâncias, exibidas na Tabela
-\ref{qapinst}, da QAPLIB \cite{qaplib} foram selecionadas. Todos os
+\ref{qapinst}, da QAPLIB \\ \cite{qaplib} foram selecionadas. Todos os
 testes foram executados num computador com sistema operacional Mac OS
 X 10.6.5; processador Intel Core 2 Duo, modelo P8700; memória
 principal de 4 GB de 1066 Mhz, PC3-8500 DDR3 SO-DIMM SDRAM. Todo o
 código foi feito na linguagem \texttt{C}, a compilação ocorreu com uso
 do gcc 4.2.1 e unicamente da opção \verb!-O2!. O código completo pode
 ser obtido em \url{http://github.com/gpolo/QAP}.
+
+Na Tabela \ref{qapinst}, a parte numérica dos itens da primeira coluna
+identifica o tamanho da instância. As duas últimas colunas, fd(A) e
+dd(B), representam, respectivamente, o predomínio de fluxo da matriz A
+e o predomínio de distância da matriz B. Como mencionado na Seção
+\ref{sec:teorico}, valores altos (maior que 100) para estes elementos
+indica instâncias com maior probabilidade de terem o melhor valor
+encontrado.
+
+Cada instância foi executada 22 vezes para cada implementação. Foi
+estabelecido um tempo limite de 3 minutos para execução.
+Para a implementação do AM, o tamanho da população inicial foi fixada
+em 42 e permite-se a expansão para até o tamanho de 50 indivíduos. A
+quantidade de recombinações realizadas por geração foi fixada em 30.
+Para o ACO, como já dito e justificado na seção sobre a implementação do
+mesmo, o valor de persistência para o feromônio $\rho$ foi configurado para
+$0.95$, decidiu-se reforçar o feromônio na melhor solução encontrada na
+iteração, $L_{melhor}^{mi}$; o número de formigas definido para o sistema
+foi $50$ e a probabilidade de encontrar a melhor solução, $p_{melhor}$, foi definida
+como sendo $0.05$.
 
 \begin{table}[H]
   \caption{Instâncias da QAPLIB utilizadas\label{qapinst},
@@ -698,25 +718,7 @@ um limite inferior estabelecido. Melhor valor para Kra32 foi corrigido}
   \end{tabular}
 \end{table}
 
-Na Tabela \ref{qapinst}, a parte numérica dos itens da primeira coluna
-identifica o tamanho da instância. As duas últimas colunas, fd(A) e
-dd(B), representam, respectivamente, o predomínio de fluxo da matriz A
-e o predomínio de distância da matriz B. Como mencionado na Seção
-\ref{sec:teorico}, valores altos (maior que 100) para estes elementos
-indica instâncias com maior probabilidade de terem o melhor valor
-encontrado.
 
-Cada instância foi executada 22 vezes para cada implementação. Foi
-estabelecido um tempo limite de 3 minutos para execução.
-Para a implementação do AM, o tamanho da população inicial foi fixada
-em 42 e permite-se a expansão para até o tamanho de 50 indivíduos. A
-quantidade de recombinações realizadas por geração foi fixada em 30.
-Para o ACO, como já dito e justificado na seção sobre a implementação do
-mesmo, o valor de persistência para o feromônio $\rho$ foi configurado para
-$0.95$, decidiu-se reforçar o feromônio na melhor solução encontrada na
-iteração, $L_{melhor}^{mi}$; o número de formigas definido para o sistema
-foi $50$ e a probabilidade de encontrar a melhor solução, $p_{melhor}$, foi definida
-como sendo $0.05$.
 
 A Tabela \ref{resultados} apresenta os resultados obtidos.
 
