@@ -12,6 +12,8 @@
 #include "ant.h"
 #include "util.h"
 
+int found_artificial_value = 0;
+
 QAP_solution_t **ant;
 QAP_solution_t *best_solution;
 
@@ -241,7 +243,8 @@ void two_opt(QAP_t *prob, QAP_solution_t *sol, calc_reduction_exchange calc_redu
         sol->perm[j_max] = aux;
         sol->cst += max_gain;
 
-        if ((prob->flags & BESTSTOP) && (sol->cst == prob->best_know_solution)) break;
+        //if ((prob->flags & BESTSTOP) && (sol->cst == prob->best_know_solution)) break;
+        if ((prob->flags & BESTSTOP) && (sol->cst == prob->best_know_solution)) found_artificial_value = 1;
     }
 }
 
@@ -254,12 +257,14 @@ void aco_local_search(QAP_t *prob){
         if (ant[i]->cst < best_solution->cst){
             *best_solution = *ant[i]; 
             best_solution->time = current_user_time_secs();
-            if ((prob->flags & BESTSTOP) && (best_solution->cst == prob->best_know_solution)) break;
+            //if ((prob->flags & BESTSTOP) && (best_solution->cst == prob->best_know_solution)) break;
+            if ((prob->flags & BESTSTOP) && (best_solution->cst == prob->best_know_solution)) found_artificial_value = 1;
         }
     }
 }
 
 int stop_condition(QAP_t *prob, int geration){
+    if (found_artificial_value) return 1;
     if ((prob->flags & MGENERATION) && prob->ngenerations <= geration) return 1;
     if ((prob->flags & TIMESTOP) && prob->time_limit <= current_user_time_secs()) return 1;
     if ((prob->flags & BESTSTOP) && best_solution->cst <= prob->best_know_solution) return 1;
@@ -282,6 +287,9 @@ QAP_solution_t *aco(QAP_t *prob){
             fflush(stdout);
         }
     }
+
+    if (found_artificial_value)
+        best_solution->time = current_user_time_secs();
 
     //QAP_check_solution(prob, best_solution);
 
