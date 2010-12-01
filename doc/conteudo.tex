@@ -128,6 +128,7 @@ descrita primeiramente.
 % fuga de ótimos locais.
 
 \subsection{Heurística Melhorativa}
+\label{sub:hm}
 % XXX Começo é praticamente o que tinha no meu outro trabalho
 
 Partindo de uma solução factível, é possível reduzir seu custo por
@@ -191,6 +192,13 @@ ou apenas formiga, é inspirado no comportamento real das formigas biológicas.
 A inspiração de desenvolver um algoritmo que simule o comportamento de uma
 colônia de formigas, se deu após o experimento de Goss et. al.\cite{Goss}.
 
+\begin{figure}[ht!]
+  \centering
+  \includegraphics[scale=0.65]{ants}
+  \label{fig:ponte}
+  \caption{Formigas Caminhando entre o Ninho e a Fonte de Comida}
+\end{figure}
+
 Em seu experimento, Goss utilizou uma colonia de formigas argentinas ({\it
 Iridomyrmex humilis}). Entre a colonia de formigas e a fonte de comida, Goss
 colocou uma ponte que se ramifica em dois caminhos, como ilustra a Figura
@@ -221,7 +229,7 @@ associada componente $c_{ij}$. No final de cada iteração, todas as formigas
 atualizam essa matriz de feromônio, baseada nas suas respectivas soluções.
 
 Inspirado no AS, Hoos \cite{mmax-origin} propôs um melhoramento chamado
-$\mathcal{Min-Max}$ Ant System ($\mathcal{MMAS}$). Sua principal intenção
+$\mathcal{Max-Min}$ Ant System ($\mathcal{MMAS}$). Sua principal intenção
 era evitar a estagnação precoce, o que faz com que todas as formigas sigam
 sempre o mesmo caminho e parem de explorar o espaço de busca. Como principal
 modificação para atingir esse objetivo, o $\mathcal{MMAS}$ delimita um
@@ -364,7 +372,7 @@ de valor atingido é utilizado, um valor é passado para o $MMAS$
 e ele irá parar a busca assim que encontrar um valor menor ou igual a esse
 parâmetro. Nas instâncias abordadas por esse trabalho, foram utilizados
 como critério de parada: o tempo e o valor atingido, de forma combinada; desta
-forma o algoritmo encerava a busca quando encontrar um valor determinado,
+forma o algoritmo encerrava a busca quando encontrar um valor determinado,
 que era o valor da melhor solução conhecida ou quando atingia o tempo
 limite de 3 minutos.
 
@@ -411,8 +419,8 @@ formula:
 % busca local
     % 2-opt
 
-A Linha \ref{ant-blocal} de \proc{QAP-MMAS}, aplica a busca local {\it
-2OPT} a solução de todas as formigas.
+A Linha \ref{ant-blocal} de \proc{QAP-MMAS}, aplica a busca local
+\textit{pairwise interchange}, como visto em \ref{sub:hm}, a solução de todas as formigas.
 
 % update
     % formula
@@ -645,7 +653,6 @@ solução melhor, então a população estagnou. Quando isso ocorre,
 descarta-se a população atual e cria-se outra, mas salva-se o
 melhor indivíduo para fazer parte deste novo conjunto de soluções.
 
-
 \section{Resultados}
 
 Para avaliar as implementações, 20 instâncias, exibidas na Tabela
@@ -704,8 +711,14 @@ estabelecido um tempo limite de 3 minutos para execução.
 Para a implementação do AM, o tamanho da população inicial foi fixada
 em 42 e permite-se a expansão para até o tamanho de 50 indivíduos. A
 quantidade de recombinações realizadas por geração foi fixada em 30.
-Para o ACO, ... XXX
-Tabela \ref{resultados} apresenta os resultados obtidos.
+Para o ACO, como já dito e justificado na seção sobre a implementação do
+mesmo, o valor de persistência para o feromônio $\rho$ foi configurado para
+$0.95$, decidiu-se reforçar o feromônio na melhor solução encontrada na
+iteração, $L_{melhor}^{mi}$; o número de formigas definido para o sistema
+foi $50$ e a probabilidade de encontrar a melhor solução, $p_{melhor}$, foi definida
+como sendo $0.05$.
+
+A Tabela \ref{resultados} apresenta os resultados obtidos.
 
 \begin{table}[H]
   \caption{Resultados \label{resultados}}
@@ -771,6 +784,9 @@ dificuldades em encontrar o melhor valor conhecido.
 Em relação ao tempo de execução, o Algoritmo Memético apresentou
 vantagem em todos os casos. Uma razão para isso é a forma com que a
 busca local foi realizada. O espaço de trocas possíveis é reduzido
-conforme indivíduos mais semelhantes vão sendo recombinados.
+conforme indivíduos mais semelhantes vão sendo recombinados. Além disso, as
+configurações utilizados no ACO são bem conservadoras, fazendo com que a
+colônia faça uma conversão lenta e explore muito o espaço de busca. Foi
+optado o uso desses parâmetros conservadores, pois o ACO implementado não
+possui um mecanismo para detectar e se recuperar da estagnação no sistema. 
 
-...
